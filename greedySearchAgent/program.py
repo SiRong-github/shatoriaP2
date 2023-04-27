@@ -21,7 +21,7 @@ own = dict()
 opponent = dict()
 currTotalPower = 0
 
-class Agent:
+class GreedyAgent:
     def __init__(self, color: PlayerColor, **referee: dict):
         """
         Initialise the agent.
@@ -128,3 +128,12 @@ class Agent:
                 else:
                     currTotalPower = updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board, opponent, own, currTotalPower)
                 pass
+
+# Testing
+# agent first: python3 -m referee agent greedySearchAgent:GreedyAgent
+# GreedyAgent first: python3 -m referee greedySearchAgent:GreedyAgent agent
+# referee["time_remaining"]
+# referee["space_remaining"]
+# referee["space_limit"]
+# Help
+# python3 -m referee -h
