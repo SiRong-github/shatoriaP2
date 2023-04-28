@@ -76,8 +76,6 @@ class Agent:
                 while(ownCopy):
                     randoIndex = random.randint(0,len(ownCopy)-1)
                     randomDirection = random.randint(0,5)
-                    print("random index")
-                    print(randoIndex)
                     count = 0
                     for k in ownCopy.keys():
                         if count == randoIndex:
@@ -86,8 +84,6 @@ class Agent:
                             direction = getRandoDir(randomDirection)
                             return SpreadAction(HexPos(x,y), HexDir(direction))           
                         count += 1
-                        print("count")
-                        print(count)
                     ownCopy.pop(k)
 
     def turn(self, color: PlayerColor, action: Action, **referee: dict):

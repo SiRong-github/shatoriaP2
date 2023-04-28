@@ -8,7 +8,7 @@ from helperFunctions.action_helpers import *
 from helperFunctions.boardHelpers import *
 from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
-import random
+from .greedyHelpers import *
 
 # This is the entry point for your game playing agent. Currently the agent
 # simply spawns a token at the centre of the board if playing as RED, and
@@ -16,8 +16,8 @@ import random
 # intended to serve as an example of how to use the referee API -- obviously
 # this is not a valid strategy for actually playing the game!
 
-board = dict()
-own = dict()
+board = dict() # (x, y) : (colour, power)
+own = dict() # (x, y) : power
 opponent = dict()
 currTotalPower = 0
 
@@ -38,56 +38,33 @@ class GreedyAgent:
         Return the next action to take.
         """
         global currTotalPower
-        randomCells = []
 
         # Determine if opening move
         if (len(board) < 2):
-            x = random.randint(0,6)
-            y = random.randint(0,6)
             match self._color:
                 case PlayerColor.RED:
-                    return SpawnAction(HexPos(x, y))
+                    return SpawnAction(HexPos(3, 3)) # easiest to visualise
                 case PlayerColor.BLUE:
-                    while(not isValidSpawnMove(board, x, y)):
-                        while(randomCells and (x,y) in randomCells):
-                            x = random.randint(0,6)
-                            y = random.randint(0,6)
-                    cell = (x,y)
-                    randomCells.append(cell)
-                    return SpawnAction(HexPos(x,y))
+                    # could be anywhere so long as one step away from board
+                    # best if on hexdir in case opponent chooses to spread towards own
+                    return SpawnAction(HexPos(5, 1)) #easiest to visualise
         else:
-            randoAction = random.randint(0,1)
-            
-            # Randomly select action type
-            if randoAction == 0 and currTotalPower <= MAX_TOTAL_POWER:
-                x = random.randint(0,6)
-                y = random.randint(0,6)
-                while(not isValidSpawnMove(board, x, y)):
-                    while(randomCells and (x,y) in randomCells):
-                        x = random.randint(0,6)
-                        y = random.randint(0,6)
-                    cell = (x,y)
-                    randomCells.append(cell)
+            # Spread if can conquer tokens
+            possibleMoves = getBestGreedySpreadMove(board, own)
+            best = possibleMoves.pop(0)
+
+            # Spawn if not best move and currTotalPower not at limit
+            if best[0] == 0 and currTotalPower <= MAX_TOTAL_POWER:
+                cell = getBestGreedySpawnMove(board, own, opponent)
+                x = cell[0]
+                y = cell[1]
                 return SpawnAction(HexPos(x,y))
-            else: 
-                ownCopy = dict(own)
-                # Check if can spread
-                while(ownCopy):
-                    randoIndex = random.randint(0,len(ownCopy)-1)
-                    randomDirection = random.randint(0,5)
-                    print("random index")
-                    print(randoIndex)
-                    count = 0
-                    for k in ownCopy.keys():
-                        if count == randoIndex:
-                            x = k[0]
-                            y = k[1]
-                            direction = getRandoDir(randomDirection)
-                            return SpreadAction(HexPos(x,y), HexDir(direction))           
-                        count += 1
-                        print("count")
-                        print(count)
-                    ownCopy.pop(k)
+            else:            
+                # Spread otherwise
+                x = best[1][0]
+                y = best[1][1]
+                direction = best[2]
+                return SpreadAction(HexPos(x, y), direction)
 
     def turn(self, color: PlayerColor, action: Action, **referee: dict):
         """
@@ -113,8 +90,5 @@ class GreedyAgent:
 # Testing
 # agent first: python3 -m referee agent greedySearchAgent:GreedyAgent
 # GreedyAgent first: python3 -m referee greedySearchAgent:GreedyAgent agent
-# referee["time_remaining"]
-# referee["space_remaining"]
-# referee["space_limit"]
 # Help
 # python3 -m referee -h

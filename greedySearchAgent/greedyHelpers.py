@@ -1,23 +1,75 @@
 # Helper functions
 
-# SpawnAction(HexPos(r,q))
-# SpreadAction(HexPos(r,q), HexDir(dr,dq))
+from referee.game import HexDir
+from helperFunctions.action_helpers import *
+from helperFunctions.tupleOperators import *
+from helperFunctions.utils import *
+from helperFunctions.boardHelpers import *
 
-# For each token, see which opponent is the closest
-def getClosestOpponent(board, red, blue):
+def getCountConqueredIfSpread(board, x, y, direction):
+    """
+    Check if valid spread move
+    """
+    cell = (x,y)
+    k = board[cell][1]
+    countConquered = 0
 
+    # Check if can empower own and/or conquer opponent
+    for i in range(1, k+1):
+        newCell = check_bounds(addTuples(cell, multiplyPower(direction, i)))
+        if newCell in board.keys():
+            countConquered += 1
+    return countConquered
 
+def getBestGreedySpreadMove(board, own):
 
-    return
+    possibleMoves = []
 
-# For each opponent, check if reachable
-def isReachable(red, blue):
+    # Search for possible spread moves
+    for cell in own.keys():
+        x = cell[0]
+        y = cell[1]
+        for dir in HexDir:
+            possibleMoves.append((getCountConqueredIfSpread(board, x, y, directionTupleConverter(dir)), cell, dir))
 
+    # Sort highest to lowest
+    possibleMoves.sort(key=lambda x: x[0], reverse=True)
 
+    return possibleMoves
+    
+def getBestGreedySpawnMove(board, own, opponent):
 
-    return
+    impossibleMoves = []
 
+    # Search for cells in range of opponent
+    for opponentToken in opponent.keys():
+        impossibleMoves.append(getOpponentRange(board, opponentToken))
 
+    # Calculate cell closest to current cell
+    for ownCell in own.keys():
+        for dir in HexDir:
+            newCell = check_bounds(addTuples(ownCell, directionTupleConverter(dir)))
+            # Check if new cell is in range of opponent
+            for opponentRange in impossibleMoves:
+                if newCell == opponentRange:
+                    break
+            if (isValidSpawnMove(board, newCell[0], newCell[1])):
+                return newCell
 
+def getOpponentRange(board, opponentToken):
+    opponentRange = []
+    k = board[opponentToken][1]
+    # Check if ownToken is in range of opponent spread
+    for dir in HexDir:
+        direction = directionTupleConverter(dir)
+        for i in range(1, k+1):
+            newCell = check_bounds(addTuples(opponentToken, multiplyPower(direction, i)))
+            opponentRange.append(newCell)
+    return opponentRange
 
-# For each opponent, get direction to the opponent
+def isBesideOpponent(ownToken, opponentToken):
+
+    for dir in HexDir:
+        if addTuples(opponentToken, directionTupleConverter(dir)) == ownToken:
+            return True
+    return False

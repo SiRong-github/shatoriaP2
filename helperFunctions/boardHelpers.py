@@ -67,19 +67,19 @@ def isValidSpawnMove(board, x, y):
         return True
     return False
 
-def isValidSpreadMove(board, x, y, direction):
-    """
-    Check if valid spread move
-    """
-    cell = (x,y)
-    k = board[cell][1]
+# def isValidSpreadMove(board, x, y, direction):
+#     """
+#     Check if valid spread move
+#     """
+#     cell = (x,y)
+#     k = board[cell][1]
 
-    # Check if can empower own and/or conquer opponent
-    for i in range(1, k+1):
-        newCell = check_bounds(addTuples(cell, multiplyPower(direction, i)))
-        if newCell in board.keys():
-            return True
-    return False
+#     # Check if can empower own and/or conquer opponent
+#     for i in range(1, k+1):
+#         newCell = check_bounds(addTuples(cell, multiplyPower(direction, i)))
+#         if newCell in board.keys():
+#             return True
+#     return False
 
 def getRandoDir(randoDir):
     """
