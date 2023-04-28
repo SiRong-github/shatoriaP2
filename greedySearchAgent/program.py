@@ -38,24 +38,15 @@ class GreedyAgent:
         Return the next action to take.
         """
         global currTotalPower
-
-        # Create a board to store all current tokens
-        updatedBoard = dict() #colour: hexPos, hexDir
-        ownTokens = dict() #hexPos: power
-        opponentTokens = dict() #hexPos: power
-        
-        timeRemaining = referee["time_remaining"]
-        spaceRemaining = referee["space_remaining"]
-        spaceLimit = referee["space_limit"]
         randomCells = []
 
         # Determine if opening move
-        if (sum(map(len, board.values())) < 2):
+        if (len(board) < 2):
             x = random.randint(0,6)
             y = random.randint(0,6)
             match self._color:
                 case PlayerColor.RED:
-                    return SpawnAction(HexPos(x, y)) # easiest to visualise if at centre
+                    return SpawnAction(HexPos(x, y))
                 case PlayerColor.BLUE:
                     while(not isValidSpawnMove(board, x, y)):
                         while(randomCells and (x,y) in randomCells):
@@ -80,33 +71,23 @@ class GreedyAgent:
                 return SpawnAction(HexPos(x,y))
             else: 
                 ownCopy = dict(own)
-                randoIndex = random.randint(0,len(ownCopy))
                 # Check if can spread
                 while(ownCopy):
+                    randoIndex = random.randint(0,len(ownCopy)-1)
+                    randomDirection = random.randint(0,5)
+                    print("random index")
+                    print(randoIndex)
                     count = 0
                     for k in ownCopy.keys():
                         if count == randoIndex:
                             x = k[0]
                             y = k[1]
-                            for dir in HexDir:
-                                direction = directionTupleConverter(dir)
-                                if (isValidSpreadMove(board, x, y, direction)):
-                                    return SpreadAction(HexPos(x,y), dir)    
-                            break
+                            direction = getRandoDir(randomDirection)
+                            return SpreadAction(HexPos(x,y), HexDir(direction))           
                         count += 1
+                        print("count")
+                        print(count)
                     ownCopy.pop(k)
-                    randoIndex = random.randint(0,len(ownCopy))
-
-                # Spawn if can't spread: no neighbouring tokens
-                x = random.randint(0,6)
-                y = random.randint(0,6)
-                while(not isValidSpawnMove(board, x, y)):
-                    while(randomCells and (x,y) in randomCells):
-                        x = random.randint(0,6)
-                        y = random.randint(0,6)
-                    cell = (x,y)
-                    randomCells.append(cell)
-                return SpawnAction(HexPos(x,y))
 
     def turn(self, color: PlayerColor, action: Action, **referee: dict):
         """
