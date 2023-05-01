@@ -8,7 +8,7 @@ from helperFunctions.action_helpers import *
 from helperFunctions.boardHelpers import *
 from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
-from .greedyHelpers import *
+from .miniMaxHelpers import *
 
 # This is the entry point for your game playing agent. Currently the agent
 # simply spawns a token at the centre of the board if playing as RED, and
@@ -21,7 +21,7 @@ own = dict() # (x, y) : power
 opponent = dict()
 currTotalPower = 0
 
-class GreedyAgent:
+class MiniMaxAgent:
     def __init__(self, color: PlayerColor, **referee: dict):
         """
         Initialise the agent.
@@ -88,7 +88,7 @@ class GreedyAgent:
                 pass
 
 # Testing
-# agent first: python3 -m referee agent greedySearchAgent:GreedyAgent
+# agent first: python -m referee agent miniMaxAgent:MiniMaxAgent
 # GreedyAgent first: python3 -m referee greedySearchAgent:GreedyAgent agent
 # Help
 # python3 -m referee -h
