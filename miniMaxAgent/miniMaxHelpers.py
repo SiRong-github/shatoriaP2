@@ -1,10 +1,36 @@
 # Helper functions
 
-from referee.game import HexDir
+from referee.game import HexDir, PlayerColor
 from helperFunctions.action_helpers import *
 from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
 from helperFunctions.boardHelpers import *
+
+def getCellRatio(board, color: PlayerColor):
+    """Return ratio of power of player cells to opponent cells, given a board dictionary"""
+
+    # Each cell is in format ((position), (color, power))
+    reds, blues = get_red_blue_cells(board)
+    reds_total = 0
+    for cell in reds:
+        reds_total += get_power(cell[0], board)
+
+    blues_total = 0
+    for cell in blues:
+        blues_total += get_power(cell[0], board)
+
+    match color:
+        case PlayerColor.RED:
+            if (blues_total == 0):
+                return 0
+            else:
+                return reds_total/blues_total
+            
+        case PlayerColor.BLUE:
+            if (reds_total == 0):
+                return 0
+            else:
+                return blues_total/reds_total
 
 def getCountConqueredIfSpread(board, x, y, direction):
     """

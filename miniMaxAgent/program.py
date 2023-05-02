@@ -38,6 +38,9 @@ class MiniMaxAgent:
         Return the next action to take.
         """
         global currTotalPower
+        
+        print(getCellRatio(board, self._color))
+        print(PlayerColor)
 
         # Determine if opening move
         if (len(board) < 2):
@@ -89,6 +92,6 @@ class MiniMaxAgent:
 
 # Testing
 # agent first: python -m referee agent miniMaxAgent:MiniMaxAgent
-# GreedyAgent first: python3 -m referee greedySearchAgent:GreedyAgent agent
+# miniMax first: python -m referee miniMaxAgent:MiniMaxAgent agent
 # Help
 # python3 -m referee -h
