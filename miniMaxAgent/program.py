@@ -9,8 +9,6 @@ from helperFunctions.boardHelpers import *
 from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
 from .miniMaxHelpers import *
-import time
-import referee
 
 # This is the entry point for your game playing agent. Currently the agent
 # simply spawns a token at the centre of the board if playing as RED, and
@@ -28,9 +26,7 @@ class MiniMaxAgent:
         """
         Initialise the agent.
         """
-        global startTime
-        startTime = time.time()
-        print("init", time)
+        
         self._color = color
         match color:
             case PlayerColor.RED:
@@ -43,9 +39,6 @@ class MiniMaxAgent:
         Return the next action to take.
         """
         global currTotalPower
-        
-        print(referee["time_remaining"] < (time.time() - startTime))
-        print(referee["time_remaining"])
         print(getCellRatio(board, self._color))
         print(PlayerColor)
 
