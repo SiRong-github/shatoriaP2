@@ -1,0 +1,116 @@
+from queue import PriorityQueue
+from helperFunctions.action_helpers import *
+from .miniMaxConstants import *
+from referee.game import PlayerColor
+from referee import *
+import timeit
+
+def  initMiniMaxTree(board, color: PlayerColor):
+    """Initializes miniMaxTree based on board state. Returns root node."""
+
+    if color == PlayerColor.RED:
+        enemyColor = PlayerColor.BLUE
+    else:
+        enemyColor = PlayerColor.Red
+
+    root_node = {"id": 1,
+                "board": board,
+                "parent_id": None,
+                "score": None,
+                "most_recent_move": None,
+                "children": None,
+                "type": MAX,
+                "color": enemyColor
+    }
+
+    root_node["score"] = 0
+
+    return root_node
+
+def miniMaxTree(board, color: PlayerColor):
+    """Constructs miniMaxTree to find best possible move, given amount of time left. Throughout the game, the opponent will be MAX and the player will be MIN. Aim to minimize "score". Returns best node from"""
+
+    curr_time = timeit.default_timer()
+    # print(render_board(input, ansi=True))
+
+    # Store all nodes that have been explored
+    all_states = dict()
+
+    # To store nodes to be expanded, in ascending order of f(n)
+    pq = PriorityQueue()
+
+    # Initialize root node
+    total_index = 1
+    nodes_expanded = 1
+
+    root_node = initMiniMaxTree(board, color)
+    all_states[1] = root_node
+
+    pq.put((root_node["score"], root_node["id"]))
+    current_node = all_states[pq.get()[1]]
+    current_solution = current_node
+
+    # Continue generating children until goal time is reached
+    while curr_time < referee["time_remaining"]:
+            child_nodes, nodes_expanded = generate_children(current_node, total_index, nodes_expanded)
+            for child_node in child_nodes:
+                all_states[child_node["id"]] = child_node
+                pq.put((child_node["score"], child_node["id"]))
+                
+                total_index += 1
+
+            current_node = all_states[pq.get()[1]]
+
+    # Return node in level 2 of the tree with LOWEST value        
+
+    return moves_made
+
+def generate_children(parent_state, total_index, nodes_expanded):
+    """Generate all possible children of a parent board state. Returns child nodes"""
+
+    parent_board = parent_state["board"]
+    red, blue = get_red_blue_cells(parent_board)
+
+    child_nodes = list()
+    # for each red cell in board state
+    for red_cell in red:
+        # expand red cell in all the possible directions
+        for direction in DIRECTIONS:
+            child_board = spread(red_cell, direction, parent_board)
+
+            # In the case that the child board has no more red cells but still has blue cells (possible in spread_test.csv for instance), abort expanding the node
+            child_red, child_blue = get_red_blue_cells(child_board)
+            if len(child_red) == 0 and len(child_blue) != 0:
+                continue
+
+            child_node, nodes_expanded = create_node(parent_state, child_board, (red_cell[0] + direction), total_index, nodes_expanded)
+            
+            child_nodes.append(child_node)
+            total_index += 1
+    return child_nodes, nodes_expanded
+
+def get_board_score(board, nodes_expanded):
+    """Returns number of moves needed to clear game, assuming that red cell can ONLY jump to a blue cell, multiple times in one move according to the power it has. See report.pdf for clearer description"""
+
+    result = getCellRatio(board)
+    nodes_expanded += result
+
+    return result, nodes_expanded
+
+def create_node(parent_state, new_board, new_move, total_index, nodes_expanded):
+    """Creates new "node" structure, given a new board"""
+
+    new_node = {"id": total_index + 1,
+                "board": new_board,
+                "parent_id": parent_state["id"],
+                "score": None,
+                "depth": parent_state["depth"] + 1,
+                "most_recent_move": new_move,
+                "children": None
+    }
+
+    results = get_board_score(new_board, nodes_expanded)
+
+    new_node["score"] = new_node["depth"] + results[0]
+
+    return new_node, results[1]

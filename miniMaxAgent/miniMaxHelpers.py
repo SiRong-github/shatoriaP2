@@ -47,41 +47,6 @@ def getCountConqueredIfSpread(board, x, y, direction):
             countConquered += 1
     return countConquered
 
-def getBestGreedySpreadMove(board, own):
-
-    possibleMoves = []
-
-    # Search for possible spread moves
-    for cell in own.keys():
-        x = cell[0]
-        y = cell[1]
-        for dir in HexDir:
-            possibleMoves.append((getCountConqueredIfSpread(board, x, y, directionTupleConverter(dir)), cell, dir))
-
-    # Sort highest to lowest
-    possibleMoves.sort(key=lambda x: x[0], reverse=True)
-
-    return possibleMoves
-    
-def getBestGreedySpawnMove(board, own, opponent):
-
-    impossibleMoves = []
-
-    # Search for cells in range of opponent
-    for opponentToken in opponent.keys():
-        impossibleMoves.append(getOpponentRange(board, opponentToken))
-
-    # Calculate cell closest to current cell
-    for ownCell in own.keys():
-        for dir in HexDir:
-            newCell = check_bounds(addTuples(ownCell, directionTupleConverter(dir)))
-            # Check if new cell is in range of opponent
-            for opponentRange in impossibleMoves:
-                if newCell == opponentRange:
-                    break
-            if (isValidSpawnMove(board, newCell[0], newCell[1])):
-                return newCell
-
 def getOpponentRange(board, opponentToken):
     opponentRange = []
     k = board[opponentToken][1]

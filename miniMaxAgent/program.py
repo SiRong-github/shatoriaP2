@@ -9,6 +9,8 @@ from helperFunctions.boardHelpers import *
 from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
 from .miniMaxHelpers import *
+import time
+import referee
 
 # This is the entry point for your game playing agent. Currently the agent
 # simply spawns a token at the centre of the board if playing as RED, and
@@ -26,6 +28,9 @@ class MiniMaxAgent:
         """
         Initialise the agent.
         """
+        global startTime
+        startTime = time.time()
+        print("init", time)
         self._color = color
         match color:
             case PlayerColor.RED:
@@ -39,6 +44,8 @@ class MiniMaxAgent:
         """
         global currTotalPower
         
+        print(referee["time_remaining"] < (time.time() - startTime))
+        print(referee["time_remaining"])
         print(getCellRatio(board, self._color))
         print(PlayerColor)
 
@@ -52,28 +59,14 @@ class MiniMaxAgent:
                     # best if on hexdir in case opponent chooses to spread towards own
                     return SpawnAction(HexPos(5, 1)) #easiest to visualise
         else:
-            # Spread if can conquer tokens
-            possibleMoves = getBestGreedySpreadMove(board, own)
-            best = possibleMoves.pop(0)
-
-            # Spawn if not best move and currTotalPower not at limit
-            if best[0] == 0 and currTotalPower <= MAX_TOTAL_POWER:
-                cell = getBestGreedySpawnMove(board, own, opponent)
-                x = cell[0]
-                y = cell[1]
-                return SpawnAction(HexPos(x,y))
-            else:            
-                # Spread otherwise
-                x = best[1][0]
-                y = best[1][1]
-                direction = best[2]
-                return SpreadAction(HexPos(x, y), direction)
+            print()
 
     def turn(self, color: PlayerColor, action: Action, **referee: dict):
         """
         Update the agent with the last player's action.
         """
         global currTotalPower
+
         match action:
             case SpawnAction(cell):
                 print(f"Testing: {color} SPAWN at {cell}")
@@ -91,7 +84,7 @@ class MiniMaxAgent:
                 pass
 
 # Testing
-# agent first: python -m referee agent miniMaxAgent:MiniMaxAgent
-# miniMax first: python -m referee miniMaxAgent:MiniMaxAgent agent
+# agent first: python -m referee -t 180 agent miniMaxAgent:MiniMaxAgent
+# miniMax first: python -m referee miniMaxAgent:MiniMaxAgent greedySearchAgent:GreedyAgent
 # Help
 # python3 -m referee -h
