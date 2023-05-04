@@ -42,7 +42,7 @@ def spawn(cell, board):
     """Spawns a cell in desired location. Returns resulting board"""
 
     copied_board = board.copy()
-    copied_board[cell[0]] = (cell[1][0], 1)
+    copied_board[cell[0]] = (cell[1][0], cell[1][1])
 
     return copied_board
 
@@ -77,17 +77,11 @@ def get_power(cell_rq, board):
     return board[cell_rq][1]
 
 def get_red_blue_cells(board):
-    """Return list of red and blue cells on board (including their power and color)"""
-    red = list()
-    blue = list()
-
-    for item in board.items():
-        if (item[1][0] == 'r'):
-            red.append(item)
-        else:
-            blue.append(item)
+    """Return list of red and blue cells on board (including their power and color) as a dictionary"""
+    reds = {key: board[key] for key in board.keys() if board[key][0] == "r"}
+    blues = {key: board[key] for key in board.keys() if board[key][0] == "b"}
     
-    return red, blue
+    return reds, blues
 
 def get_power(cell, board):
     """Returns power of cell (r, q) in board."""

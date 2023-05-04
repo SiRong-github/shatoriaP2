@@ -65,31 +65,36 @@ def miniMaxTree(board, color: PlayerColor):
 def generate_children(parent_node, total_index, all_states):
     """Generate all possible children of a parent node. Returns child nodes"""
 
+    parent_board = parent_node["board"]
     reds, blues = get_red_blue_cells(parent_node["board"])
 
     # get 
     if parent_node["color"] == PlayerColor.RED:
+        child_color = "b"
         child_cells = blues
     else:
+        child_color = "r"
         child_cells = reds
 
     child_nodes = list()
-    # for each cell in board state
-    for red_cell in red:
-        # spread cell in all the possible directions
-        for direction in DIRECTIONS:
-            child_board = spread(red_cell, direction, parent_board)
-
-            # In the case that the child board has no more red cells but still has blue cells (possible in spread_test.csv for instance), abort expanding the node
-            child_red, child_blue = get_red_blue_cells(child_board)
-            if len(child_red) == 0 and len(child_blue) != 0:
-                continue
-
-            child_node = create_node(parent_state, child_board, (red_cell[0] + direction), total_index, all_states)
+    
+    # for each cell of current player of node, spread cell in all the possible directions
+    for cell in child_cells.keys():
+        possibleSpreads = getSpreadMoves(cell)
+        for spread_move in possibleSpreads:
+            child_board = spread(spread_move[0], spread_move[1], parent_board)
+            child_node = create_node(parent_node, child_board, (cell, spread_move[1]), total_index, all_states)
             
             child_nodes.append(child_node)
             total_index += 1
-        # spawn cell in all possible empty spaces
+
+    # spawn cell in all possible empty spaces
+    for spawn_move in getSpawnMoves(parent_board):
+        child_board = spawn(spawn_move, child_color)
+        child_node = create_node(parent_node, child_board, (spawn_move[0], (0, 0)), total_index, all_states)
+            
+        child_nodes.append(child_node)
+        total_index += 1
         
     return child_nodes
 

@@ -57,12 +57,13 @@ def getSpreadMoves(own):
     for cell in own.keys():
         x = cell[0]
         y = cell[1]
+
         for dir in HexDir:
-            possibleMoves.append(cell, dir)
+            possibleMoves.append(cell, directionTupleConverter(dir))
 
     return possibleMoves
 
-def getSpawnMoves(board):
+def getSpawnMoves(board, color):
     """Return all possible spawn moves on board."""
 
     doableMoves = []
@@ -71,7 +72,7 @@ def getSpawnMoves(board):
     for i in range(0, 7):
         for j in range(0, 7):
             if (i, j) not in board:
-                doableMoves.append((i, j))
+                doableMoves.append(((i, j), (color, 1)))
     
     return doableMoves
 
