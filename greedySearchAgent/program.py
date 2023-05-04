@@ -9,7 +9,6 @@ from helperFunctions.boardHelpers import *
 from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
 from .greedyHelpers import *
-from miniMaxAgent import *
 
 # This is the entry point for your game playing agent. Currently the agent
 # simply spawns a token at the centre of the board if playing as RED, and
@@ -42,11 +41,30 @@ class GreedyAgent:
 
         # Determine if opening move
         if (len(board) < 2):
-            if self._color == PlayerColor.RED:
-                return SpawnAction(HexPos(3, 3)) # easiest to visualise
-                
+            match self._color:
+                case PlayerColor.RED:
+                    return SpawnAction(HexPos(3, 3)) # easiest to visualise
+                case PlayerColor.BLUE:
+                    # could be anywhere so long as one step away from board
+                    # best if on hexdir in case opponent chooses to spread towards own
+                    return SpawnAction(HexPos(5, 1)) #easiest to visualise
         else:
-            move = miniMaxTree(board, self._color)
+            # Spread if can conquer tokens
+            possibleMoves = getBestGreedySpreadMove(board, own)
+            best = possibleMoves.pop(0)
+
+            # Spawn if not best move and currTotalPower not at limit
+            if best[0] == 0 and currTotalPower <= MAX_TOTAL_POWER:
+                cell = getBestGreedySpawnMove(board, own, opponent)
+                x = cell[0]
+                y = cell[1]
+                return SpawnAction(HexPos(x,y))
+            else:            
+                # Spread otherwise
+                x = best[1][0]
+                y = best[1][1]
+                direction = best[2]
+                return SpreadAction(HexPos(x, y), direction)
 
     def turn(self, color: PlayerColor, action: Action, **referee: dict):
         """
