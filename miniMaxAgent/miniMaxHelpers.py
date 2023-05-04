@@ -5,32 +5,42 @@ from helperFunctions.action_helpers import *
 from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
 from helperFunctions.boardHelpers import *
-import time
 
-def getCellRatio(board, color: PlayerColor):
-    """Return ratio of power of player cells to opponent cells, given a board dictionary"""
+def getOppositeColor(color: PlayerColor):
+    if color == PlayerColor.RED:
+        return PlayerColor.BLUE
+    else:
+        return PlayerColor.RED
+
+def getCellRatio(board, maxColor: PlayerColor):
+    """Return ratio of power of player cells to opponent cells, relative to MAX"""
 
     # Each cell is in format ((position), (color, power))
     reds, blues = get_red_blue_cells(board)
     reds_total = 0
-    for cell in reds:
-        reds_total += get_power(cell[0], board)
+    for cell in reds.keys():
+        reds_total += get_power(cell, board)
 
     blues_total = 0
-    for cell in blues:
-        blues_total += get_power(cell[0], board)
+    for cell in blues.keys():
+        blues_total += get_power(cell, board)
+    print("Get cell ratio, blues total", blues_total)
 
-    match color:
+    match maxColor:
         case PlayerColor.RED:
             if (blues_total == 0):
+                print("1")
                 return 0
             else:
+                print("2")
                 return reds_total/blues_total
             
         case PlayerColor.BLUE:
             if (reds_total == 0):
+                print("3")
                 return 0
             else:
+                print("4")
                 return blues_total/reds_total
 
 def getCountConqueredIfSpread(board, x, y, direction):

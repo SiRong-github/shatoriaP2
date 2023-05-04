@@ -37,9 +37,9 @@ def miniMaxTree(board, color: PlayerColor):
 
     # Initialize root node
     total_index = 1
-
     root_node = initMiniMaxTree(board, color)
     all_states[1] = root_node
+    maxColor = root_node["color"]
 
     # Negative because we want to expand nodes with highest scores first, since we are playing as MAX
     pq.put((-root_node["score"], root_node["id"]))
@@ -48,10 +48,11 @@ def miniMaxTree(board, color: PlayerColor):
     # Continue generating children until goal time is reached
     # alpha beta pruning (later) - focus on expanding board states which can take over a lot of cells
     while (startTime - time.time()) < 5:
-        child_nodes = generate_children(current_node, total_index, all_states)
+        child_nodes = generate_children(current_node, total_index, all_states, maxColor)
 
         for child_node in child_nodes:
             all_states[child_node["id"]] = child_node
+            print("child score", child_node["score"])
             pq.put((-child_node["score"], child_node["id"]))
                 
             total_index += 1
@@ -64,19 +65,18 @@ def miniMaxTree(board, color: PlayerColor):
 
     return all_states[maxID]["most_recent_move"]
 
-def generate_children(parent_node, total_index, all_states):
+def generate_children(parent_node, total_index, all_states, maxColor):
     """Generate all possible children of a parent node. Returns child nodes"""
 
     parent_board = parent_node["board"]
+    parent_color = parent_node["color"]
     reds, blues = get_red_blue_cells(parent_node["board"])
 
     # get 
-    if parent_node["color"] == PlayerColor.RED:
-        child_color = "b"
-        child_cells = blues
-    else:
-        child_color = "r"
+    if parent_color == PlayerColor.RED:
         child_cells = reds
+    else:
+        child_cells = blues
 
     child_nodes = list()
     
@@ -85,22 +85,22 @@ def generate_children(parent_node, total_index, all_states):
         possibleSpreads = getSpreadMoves(cell)
         for spread_move in possibleSpreads:
             child_board = spread(spread_move[0], spread_move[1], parent_board)
-            child_node = create_node(parent_node, child_board, (cell, spread_move[1]), total_index, all_states)
+            child_node = create_node(parent_node, child_board, (cell, spread_move[1]), total_index, all_states, maxColor)
             
             child_nodes.append(child_node)
             total_index += 1
 
     # spawn cell in all possible empty spaces
-    for spawn_move in getSpawnMoves(parent_board):
-        child_board = spawn(spawn_move, child_color)
-        child_node = create_node(parent_node, child_board, (spawn_move[0], (0, 0)), total_index, all_states)
+    for spawn_move in getSpawnMoves(parent_board, parent_color):
+        child_board = spawn(spawn_move, parent_board)
+        child_node = create_node(parent_node, child_board, (spawn_move[0], (0, 0)), total_index, all_states, maxColor)
             
         child_nodes.append(child_node)
         total_index += 1
         
     return child_nodes
 
-def create_node(parent_node, new_board, new_move, total_index, all_states):
+def create_node(parent_node, new_board, new_move, total_index, all_states, maxColor):
     """Creates new "node" structure, given a new board"""
 
     new_node = {"id": total_index + 1,
@@ -115,16 +115,13 @@ def create_node(parent_node, new_board, new_move, total_index, all_states):
     }
 
     if parent_node["type"] == MAX:
-        new_node["type"] == MINI
+        new_node["type"] = MINI
     else:
-        new_node["type"] == MAX
+        new_node["type"] = MAX
 
-    if parent_node["color"] == PlayerColor.RED:
-        new_node["color"] == PlayerColor.BLUE
-    else:
-        new_node["color"] == PlayerColor.RED
+    new_node["color"] = getOppositeColor(parent_node["color"])
 
-    new_node["score"] = getCellRatio(new_board, new_node["color"])
+    new_node["score"] = getCellRatio(new_board, maxColor)
     propagateScore(new_node, all_states)
 
     return new_node
@@ -135,11 +132,11 @@ def propagateScore(node, all_states):
     current_node = node
 
     while (current_node["parent_id"] != None):
-        if (current_node["type"] == MAX and current_node["score"] < all_states[node["parent_id"]["score"]]):
+        if (current_node["type"] == MAX and current_node["score"] < all_states[node["parent_id"]]["score"]):
             # Parent MINI would want to pick lower scored move
             all_states[node["parent_id"]]["score"] = current_node["score"]
 
-        elif (current_node["type"] == MINI and current_node["score"] > all_states[node["parent_id"]["score"]]):
+        elif (current_node["type"] == MINI and current_node["score"] > all_states[node["parent_id"]]["score"]):
             # Parent MAX would want to pick higher scored move
             all_states[node["parent_id"]]["score"] = current_node["score"]
 
