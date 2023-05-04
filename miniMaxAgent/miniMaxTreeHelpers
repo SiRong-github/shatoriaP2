@@ -52,15 +52,17 @@ def miniMaxTree(board, color: PlayerColor):
 
         for child_node in child_nodes:
             all_states[child_node["id"]] = child_node
-            pq.put((child_node["score"], child_node["id"]))
+            pq.put((-child_node["score"], child_node["id"]))
                 
             total_index += 1
 
             current_node = all_states[pq.get()[1]]
 
-    # Return node in level 1 of the tree with MAXIMUM value
+    # Return move in level 1 of the tree with MAXIMUM value
+    depth1Nodes = {key: value for key, value in all_states.items() if value["depth"] == 1}
+    maxID = max(node["score"] for node in depth1Nodes.values())
 
-    return ""
+    return all_states[maxID]["most_recent_move"]
 
 def generate_children(parent_node, total_index, all_states):
     """Generate all possible children of a parent node. Returns child nodes"""

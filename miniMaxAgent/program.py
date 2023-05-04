@@ -9,6 +9,7 @@ from helperFunctions.boardHelpers import *
 from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
 from .miniMaxHelpers import *
+from .miniMaxTreeHelpers import *
 
 # This is the entry point for your game playing agent. Currently the agent
 # simply spawns a token at the centre of the board if playing as RED, and
@@ -43,16 +44,10 @@ class MiniMaxAgent:
         print(PlayerColor)
 
         # Determine if opening move
-        if (len(board) < 2):
-            match self._color:
-                case PlayerColor.RED:
-                    return SpawnAction(HexPos(3, 3)) # easiest to visualise
-                case PlayerColor.BLUE:
-                    # could be anywhere so long as one step away from board
-                    # best if on hexdir in case opponent chooses to spread towards own
-                    return SpawnAction(HexPos(5, 1)) #easiest to visualise
-        else:
-            print()
+        if (len(board) < 2) and self._color == PlayerColor.RED:
+            return SpawnAction(HexPos(3, 3)) # easiest to visualise
+        
+        move = miniMaxTree(board, color: PlayerColor)
 
     def turn(self, color: PlayerColor, action: Action, **referee: dict):
         """
