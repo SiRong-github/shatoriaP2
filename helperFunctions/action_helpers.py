@@ -38,6 +38,14 @@ def spread(cell, direction, board):
 
     return copied_board
 
+def spawn(cell, board):
+    """Spawns a cell in desired location. Returns resulting board"""
+
+    copied_board = board.copy()
+    copied_board[cell[0]] = (cell[1][0], 1)
+
+    return copied_board
+
 def valid_spread(cell_rq, board):
     """Return true if it's possible to spread cell (r, q), and false otherwise."""
 
