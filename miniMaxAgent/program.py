@@ -47,6 +47,10 @@ class MiniMaxAgent:
             return SpawnAction(HexPos(3, 3)) # easiest to visualise
         
         move = miniMaxTree(board, self._color)
+        if move[1] == (0, 0):
+            return SpawnAction(HexPos(move[0]))
+        else:
+            return SpreadAction(move[0], move[1])
 
     def turn(self, color: PlayerColor, action: Action, **referee: dict):
         """
