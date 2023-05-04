@@ -9,19 +9,19 @@ def spread(cell, direction, board):
     copied_board = board.copy()
 
     cell_rq = cell[0]
+    cell_color = cell[1][0]
     
     curr_power = get_power(cell_rq, copied_board)
 
     # Spreads cells across board in `direction` according to `cell`'s power
     spread_cell = (cell_rq[0] + direction[0], cell_rq[1] + direction[1])
-    cell_color = cell[1][1]
 
     while (curr_power != 0):
         spread_cell = check_bounds(spread_cell)
 
         # spread to an empty space
         if (spread_cell not in copied_board):
-            copied_board[spread_cell] = (PlayerColor, 1)
+            copied_board[spread_cell] = (cell_color, 1)
 
         # delete destination cell from board if its power is above 6
         elif (get_power(spread_cell, copied_board) + 1 > MAX_COORDINATE):

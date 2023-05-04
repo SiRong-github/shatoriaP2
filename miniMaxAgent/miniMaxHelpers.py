@@ -6,6 +6,12 @@ from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
 from helperFunctions.boardHelpers import *
 
+def getBoardPower(board):
+    totalPower = 0
+    for vals in board.values():
+        totalPower += vals[1]
+    return totalPower
+
 def getOppositeColor(color: PlayerColor):
     if color == PlayerColor.RED:
         return PlayerColor.BLUE
@@ -24,13 +30,12 @@ def getCellRatio(board, maxColor: PlayerColor):
     blues_total = 0
     for cell in blues.keys():
         blues_total += get_power(cell, board)
-    #print("Get cell ratio, blues total", blues_total)
 
     match maxColor:
         case PlayerColor.RED:
             if (blues_total == 0):
                 #print("1")
-                return 0
+                return 49
             else:
                 #print("2")
                 return reds_total/blues_total
@@ -38,7 +43,7 @@ def getCellRatio(board, maxColor: PlayerColor):
         case PlayerColor.BLUE:
             if (reds_total == 0):
                 #print("3")
-                return 0
+                return 49
             else:
                 #print("4")
                 return blues_total/reds_total

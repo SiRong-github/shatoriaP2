@@ -41,11 +41,12 @@ def miniMaxTree(board, color: PlayerColor):
     maxColor = root_node["color"]
 
     # Negative because we want to expand nodes with highest scores first, since we are playing as MAX
-    pq.put((-root_node["score"], root_node["id"]))
+    pq.put((root_node["score"], root_node["id"]))
     current_node = all_states[pq.get()[1]]
 
     # Continue generating children until goal time is reached
     # alpha beta pruning (later) - focus on expanding board states which can take over a lot of cells
+    
     while (time.time() - startTime) < 0.5:
         child_nodes = generate_children(current_node, total_index, all_states, maxColor)
 
@@ -60,7 +61,9 @@ def miniMaxTree(board, color: PlayerColor):
 
     # Return move in level 1 of the tree with MAXIMUM value
     depth1Nodes = {key: value for key, value in all_states.items() if value["depth"] == 1}
-    print(depth1Nodes)
+    #print(depth1Nodes)
+
+    maxID = 2
     maxScore = 0
     for id, node in depth1Nodes.items():
         if node["score"] > maxScore:
@@ -68,14 +71,15 @@ def miniMaxTree(board, color: PlayerColor):
             maxID = id
             maxScore = node["score"]
     
-    print(maxID)
+    #print(maxID)
     move = all_states[maxID]["most_recent_move"]
-    print("move", move)
+    #print("move", move)
+    # print(all_states)
     cell = move[0][0]
 
     bestMove = (cell, move[1])
     
-    print("BESTMOVE", bestMove)
+    #print("BESTMOVE", bestMove)
 
     return bestMove
 
@@ -104,13 +108,15 @@ def generate_children(parent_node, total_index, all_states, maxColor):
         child_nodes.append(child_node)
         total_index += 1
 
-    # spawn cell in all possible empty spaces
-    for spawn_move in getSpawnMoves(parent_board, parent_color):
-        child_board = spawn(spawn_move, parent_board)
-        child_node = create_node(parent_node, child_board, (spawn_move, (0, 0)), total_index, all_states, maxColor)
-            
-        child_nodes.append(child_node)
-        total_index += 1
+    # spawn cell in all possible empty spaces IF board power is not 49
+    if getBoardPower(parent_board) < 49:
+        for spawn_move in getSpawnMoves(parent_board, parent_color):
+            child_board = spawn(spawn_move, parent_board)
+            #print("child_board", child_board)
+            child_node = create_node(parent_node, child_board, (spawn_move, (0, 0)), total_index, all_states, maxColor)
+                
+            child_nodes.append(child_node)
+            total_index += 1
         
     return child_nodes
 
