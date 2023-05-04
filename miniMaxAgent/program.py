@@ -8,7 +8,6 @@ from helperFunctions.action_helpers import *
 from helperFunctions.boardHelpers import *
 from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
-from .miniMaxHelpers import *
 from .miniMaxTreeHelpers import *
 
 # This is the entry point for your game playing agent. Currently the agent
@@ -47,7 +46,7 @@ class MiniMaxAgent:
         if (len(board) < 2) and self._color == PlayerColor.RED:
             return SpawnAction(HexPos(3, 3)) # easiest to visualise
         
-        move = miniMaxTree(board, color: PlayerColor)
+        move = miniMaxTree(board, self._color)
 
     def turn(self, color: PlayerColor, action: Action, **referee: dict):
         """
