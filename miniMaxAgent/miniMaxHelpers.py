@@ -48,15 +48,65 @@ def getCountConqueredIfSpread(board, x, y, direction):
             countConquered += 1
     return countConquered
 
+def getSpreadMoves(own):
+    """Return all possible spread moves on board."""
+
+    possibleMoves = []
+
+    # Search for possible spread moves
+    for cell in own.keys():
+        x = cell[0]
+        y = cell[1]
+        for dir in HexDir:
+            possibleMoves.append(cell, dir)
+
+    return possibleMoves
+
+def getSpawnMoves(board):
+    """Return all possible spawn moves on board."""
+
+    doableMoves = []
+
+    # Get spawn moves which are not in opponent range
+    for i in range(0, 7):
+        for j in range(0, 7):
+            if (i, j) not in board:
+                doableMoves.append((i, j))
+    
+    return doableMoves
+
+def getDefensiveSpawnMoves(board, opponent):
+    """Return spawn moves which aren't in `opponent` range. Possible way of alpha beta pruning!"""
+
+    impossibleMoves = []
+    doableMoves = []
+
+    # Search for cells in range of opponent
+    for opponentToken in opponent.keys():
+        impossibleMoves.append(getOpponentRange(board, opponentToken))
+
+    # Get spawn moves which are not in opponent range
+    for i in range(0, 7):
+        for j in range(0, 7):
+            if (i, j) not in impossibleMoves:
+                doableMoves.append((i, j))
+    
+    return doableMoves
+
 def getOpponentRange(board, opponentToken):
+    """Returns cells which an opponent cell `opponentToken` can reach"""
+     
     opponentRange = []
-    k = board[opponentToken][1]
+    k = board[opponentToken][1] # power of opponent cell
+
     # Check if ownToken is in range of opponent spread
     for dir in HexDir:
         direction = directionTupleConverter(dir)
+
         for i in range(1, k+1):
             newCell = check_bounds(addTuples(opponentToken, multiplyPower(direction, i)))
             opponentRange.append(newCell)
+
     return opponentRange
 
 def isBesideOpponent(ownToken, opponentToken):
