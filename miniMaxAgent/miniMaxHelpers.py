@@ -24,23 +24,23 @@ def getCellRatio(board, maxColor: PlayerColor):
     blues_total = 0
     for cell in blues.keys():
         blues_total += get_power(cell, board)
-    print("Get cell ratio, blues total", blues_total)
+    #print("Get cell ratio, blues total", blues_total)
 
     match maxColor:
         case PlayerColor.RED:
             if (blues_total == 0):
-                print("1")
+                #print("1")
                 return 0
             else:
-                print("2")
+                #print("2")
                 return reds_total/blues_total
             
         case PlayerColor.BLUE:
             if (reds_total == 0):
-                print("3")
+                #print("3")
                 return 0
             else:
-                print("4")
+                #print("4")
                 return blues_total/reds_total
 
 def getCountConqueredIfSpread(board, x, y, direction):
@@ -69,7 +69,7 @@ def getSpreadMoves(own):
         y = cell[1]
 
         for dir in HexDir:
-            possibleMoves.append(cell, directionTupleConverter(dir))
+            possibleMoves.append(((cell, own[cell]), directionTupleConverter(dir)))
 
     return possibleMoves
 

@@ -114,3 +114,20 @@ def directionTupleConverter(direction):
         return (1, -1)
     else:
         return (1, 0)
+
+def tupleDirectionConverter(tuple):
+    """
+    Convert direction to tuple
+    """
+    if tuple == (0, 1): 
+        return HexDir.DownRight
+    elif tuple == (-1,1):      
+        return HexDir.Down
+    elif tuple == (-1, 0):  
+        return HexDir.DownLeft
+    elif tuple == (0, -1):    
+        return HexDir.UpLeft
+    elif tuple == (1, -1):         
+        return HexDir.Up
+    else:
+        return HexDir.UpRight

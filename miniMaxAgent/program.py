@@ -39,8 +39,6 @@ class MiniMaxAgent:
         Return the next action to take.
         """
         global currTotalPower
-        print(getCellRatio(board, self._color))
-        print(PlayerColor)
 
         # Determine if opening move
         if (len(board) < 2) and self._color == PlayerColor.RED:
@@ -48,10 +46,13 @@ class MiniMaxAgent:
         
         else:
             move = miniMaxTree(board, self._color)
+            cell = HexPos(move[0][0], move[0][1])
+
             if move[1] == (0, 0):
-                return SpawnAction(HexPos(move[0]))
+                return SpawnAction(cell)
             else:
-                return SpreadAction(move[0], move[1])
+                dir = tupleDirectionConverter(move[1])
+                return SpreadAction(cell, dir)
 
     def turn(self, color: PlayerColor, action: Action, **referee: dict):
         """

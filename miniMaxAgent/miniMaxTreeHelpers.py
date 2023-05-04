@@ -4,7 +4,6 @@ from .miniMaxConstants import *
 from .miniMaxHelpers import *
 from referee.game import PlayerColor
 import time
-from referee import *
 
 def  initMiniMaxTree(board, color: PlayerColor):
     """Initializes miniMaxTree based on board state. Returns root node."""
@@ -47,12 +46,12 @@ def miniMaxTree(board, color: PlayerColor):
 
     # Continue generating children until goal time is reached
     # alpha beta pruning (later) - focus on expanding board states which can take over a lot of cells
-    while (startTime - time.time()) < 5:
+    while (time.time() - startTime) < 0.5:
         child_nodes = generate_children(current_node, total_index, all_states, maxColor)
 
         for child_node in child_nodes:
             all_states[child_node["id"]] = child_node
-            print("child score", child_node["score"])
+            #print("child score", child_node["score"])
             pq.put((-child_node["score"], child_node["id"]))
                 
             total_index += 1
@@ -61,9 +60,24 @@ def miniMaxTree(board, color: PlayerColor):
 
     # Return move in level 1 of the tree with MAXIMUM value
     depth1Nodes = {key: value for key, value in all_states.items() if value["depth"] == 1}
-    maxID = max(node["score"] for node in depth1Nodes.values())
+    print(depth1Nodes)
+    maxScore = 0
+    for id, node in depth1Nodes.items():
+        if node["score"] > maxScore:
+            #print("id", id)
+            maxID = id
+            maxScore = node["score"]
+    
+    print(maxID)
+    move = all_states[maxID]["most_recent_move"]
+    print("move", move)
+    cell = move[0][0]
 
-    return all_states[maxID]["most_recent_move"]
+    bestMove = (cell, move[1])
+    
+    print("BESTMOVE", bestMove)
+
+    return bestMove
 
 def generate_children(parent_node, total_index, all_states, maxColor):
     """Generate all possible children of a parent node. Returns child nodes"""
@@ -81,19 +95,19 @@ def generate_children(parent_node, total_index, all_states, maxColor):
     child_nodes = list()
     
     # for each cell of current player of node, spread cell in all the possible directions
-    for cell in child_cells.keys():
-        possibleSpreads = getSpreadMoves(cell)
-        for spread_move in possibleSpreads:
-            child_board = spread(spread_move[0], spread_move[1], parent_board)
-            child_node = create_node(parent_node, child_board, (cell, spread_move[1]), total_index, all_states, maxColor)
-            
-            child_nodes.append(child_node)
-            total_index += 1
+    possibleSpreads = getSpreadMoves(child_cells)
+    for spread_move in possibleSpreads:
+        #print("spreadmove", spread_move)
+        child_board = spread(spread_move[0], spread_move[1], parent_board)
+        child_node = create_node(parent_node, child_board, (spread_move[0], spread_move[1]), total_index, all_states, maxColor)
+        
+        child_nodes.append(child_node)
+        total_index += 1
 
     # spawn cell in all possible empty spaces
     for spawn_move in getSpawnMoves(parent_board, parent_color):
         child_board = spawn(spawn_move, parent_board)
-        child_node = create_node(parent_node, child_board, (spawn_move[0], (0, 0)), total_index, all_states, maxColor)
+        child_node = create_node(parent_node, child_board, (spawn_move, (0, 0)), total_index, all_states, maxColor)
             
         child_nodes.append(child_node)
         total_index += 1
