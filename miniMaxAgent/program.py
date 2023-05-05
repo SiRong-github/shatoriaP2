@@ -10,6 +10,11 @@ from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
 from .miniMaxTreeHelpers import *
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG, filename="logfile.txt", filemode="a+",
+    format="%(asctime)-15s %(levelname)-8s %(message)s")
+
 # This is the entry point for your game playing agent. Currently the agent
 # simply spawns a token at the centre of the board if playing as RED, and
 # spreads a token at the centre of the board if playing as BLUE. This is
@@ -39,12 +44,21 @@ class MiniMaxAgent:
         Return the next action to take.
         """
         global currTotalPower
+        global turn
+
+        if (len(board) == 0):
+            turn = 1
+        elif (len(board) == 1):
+            turn = 0
 
         # Determine if opening move
         if (len(board) < 2) and self._color == PlayerColor.RED:
+            logging.debug(f"{self._color}, TURN: {turn}")
             return SpawnAction(HexPos(3, 3)) # easiest to visualise
         
         else:
+            turn += 2
+            logging.debug(f"{self._color}, TURN: {turn}")
             move = miniMaxTree(board, self._color)
             cell = HexPos(move[0][0], move[0][1])
 
@@ -62,14 +76,14 @@ class MiniMaxAgent:
 
         match action:
             case SpawnAction(cell):
-                print(f"Testing: {color} SPAWN at {cell}")
+                #print(f"Testing: {color} SPAWN at {cell}")
                 if color == self._color:
                     currTotalPower = updateBoardSpawn(tuple(cell), color, board, own, currTotalPower)
                 else:
                     currTotalPower = updateBoardSpawn(tuple(cell), color, board, opponent, currTotalPower)
                 pass
             case SpreadAction(cell, direction):
-                print(f"Testing: {color} SPREAD from {cell}, {direction}")
+                #print(f"Testing: {color} SPREAD from {cell}, {direction}")
                 if color == self._color:
                     currTotalPower = updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board, own, opponent, currTotalPower)
                 else:
@@ -78,10 +92,12 @@ class MiniMaxAgent:
 
 # Testing
 # agent first: python -m referee -t 30 greedySearchAgent:GreedyAgent miniMaxAgent:MiniMaxAgent
-#agent first: python -m referee -t 0.2 miniMaxAgent:MiniMaxAgent miniMaxAgent:MiniMaxAgent
 
+#agent first: python -m referee -t 0.2 miniMaxAgent:MiniMaxAgent miniMaxAgent:MiniMaxAgent
 # miniMax first: python -m referee miniMaxAgent:MiniMaxAgent greedySearchAgent:GreedyAgent
+
 # python -m referee -t 180 miniMaxAgent:MiniMaxAgent miniMaxAgent:MiniMaxAgent
 # python -m referee -t 180 miniMaxAgent:MiniMaxAgent greedySearchAgent:GreedyAgent
+# python -m referee -t 180 greedySearchAgent:GreedyAgent miniMaxAgent:MiniMaxAgent 
 # Help
 # python3 -m referee -h

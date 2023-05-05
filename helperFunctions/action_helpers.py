@@ -68,11 +68,6 @@ def get_color(cell_rq, board):
 
     return board[cell_rq][0]
 
-def get_power(cell_rq, board):
-    """Returns power of cell (r, q) in board."""
-
-    return board[cell_rq][1]
-
 def get_red_blue_cells(board):
     """Return list of red and blue cells on board (including their power and color) as a dictionary"""
     # print("board", board)

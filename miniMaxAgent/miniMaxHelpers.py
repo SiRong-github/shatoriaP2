@@ -47,6 +47,26 @@ def getCellRatio(board, maxColor: PlayerColor):
             else:
                 #print("4")
                 return blues_total/reds_total
+            
+def getTotalPower(board, maxColor: PlayerColor):
+    """Return ratio of power of player cells to opponent cells, relative to MAX"""
+
+    # Each cell is in format ((position), (color, power))
+    reds, blues = get_red_blue_cells(board)
+
+    match maxColor:
+        case PlayerColor.RED:
+            cells = reds
+            
+        case PlayerColor.BLUE:
+            cells = blues
+    
+    sum = 0
+    for cell in cells:
+        sum += get_power(cell, board)
+        
+    return sum
+
 
 def getCountConqueredIfSpread(board, x, y, direction):
     """

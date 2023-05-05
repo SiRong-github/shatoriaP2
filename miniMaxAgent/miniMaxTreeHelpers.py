@@ -4,6 +4,7 @@ from .miniMaxConstants import *
 from .miniMaxHelpers import *
 from referee.game import PlayerColor
 import time
+import logging
 
 def  initMiniMaxTree(board, color: PlayerColor):
     """Initializes miniMaxTree based on board state. Returns root node."""
@@ -14,7 +15,6 @@ def  initMiniMaxTree(board, color: PlayerColor):
                 "score": None,
                 "depth": 0,
                 "most_recent_move": None,
-                "children": None,
                 "type": MAX,
                 "color": color
     }
@@ -35,10 +35,10 @@ def miniMaxTree(board, color: PlayerColor):
     pq = PriorityQueue()
 
     # Initialize root node
-    total_index = 1
     root_node = initMiniMaxTree(board, color)
     all_states[1] = root_node
     maxColor = root_node["color"]
+    # print("MaxColor", maxColor)
 
     # Negative because we want to expand nodes with highest scores first, since we are playing as MAX
     pq.put((root_node["score"], root_node["id"]))
@@ -46,35 +46,51 @@ def miniMaxTree(board, color: PlayerColor):
 
     # Continue generating children until goal time is reached
     # alpha beta pruning (later) - focus on expanding board states which can take over a lot of cells
-    
-    while (time.time() - startTime) < 0.5:
-        child_nodes = generate_children(current_node, total_index, all_states, maxColor)
 
+    current_index = 1
+    while (time.time() - startTime) < 0.5:
+        child_nodes = generate_children(current_node, current_index, all_states, maxColor)
+        
         for child_node in child_nodes:
             all_states[child_node["id"]] = child_node
             #print("child score", child_node["score"])
             pq.put((-child_node["score"], child_node["id"]))
-                
-            total_index += 1
+        
+        # print(color, [node["score"] for node in child_nodes])
 
-            current_node = all_states[pq.get()[1]]
+        current_node = all_states[pq.get()[1]]
+        current_index += len(child_nodes)
 
     # Return move in level 1 of the tree with MAXIMUM value
     depth1Nodes = {key: value for key, value in all_states.items() if value["depth"] == 1}
-    #print(depth1Nodes)
+    # print(depth1Nodes)
+    #logging.debug(depth1Nodes)
 
     maxID = 2
     maxScore = 0
     for id, node in depth1Nodes.items():
         if node["score"] > maxScore:
             #print("id", id)
+            logging.debug(f"Changed max node")
             maxID = id
             maxScore = node["score"]
+
+        # tiebreaker - if ratio is the same, pick the node with higher total power
+        elif node["score"] == maxScore:
+            currBoard = node["board"]
+            maxBoard = all_states[maxID]["board"]
+            logging.debug(f"{getTotalPower(currBoard, color)}, {getTotalPower(maxBoard, color)}")
+
+            if (getTotalPower(node["board"], color) > getTotalPower(all_states[maxID]["board"], color)):
+                maxID = id
+                maxScore = node["score"]
+                print("YES IT HAPPENED")
+
     
     #print(maxID)
     move = all_states[maxID]["most_recent_move"]
     #print("move", move)
-    # print(all_states)
+
     cell = move[0][0]
 
     bestMove = (cell, move[1])
@@ -83,7 +99,7 @@ def miniMaxTree(board, color: PlayerColor):
 
     return bestMove
 
-def generate_children(parent_node, total_index, all_states, maxColor):
+def generate_children(parent_node, current_index, all_states, maxColor):
     """Generate all possible children of a parent node. Returns child nodes"""
 
     parent_board = parent_node["board"]
@@ -97,41 +113,42 @@ def generate_children(parent_node, total_index, all_states, maxColor):
         child_cells = blues
 
     child_nodes = list()
+
+     # spawn cell in all possible empty spaces IF board power is not 49
+    if getBoardPower(parent_board) < 49:
+        for spawn_move in getSpawnMoves(parent_board, parent_color):
+            current_index += 1
+            child_board = spawn(spawn_move, parent_board)
+            #print("child_board", child_board)
+            child_node = create_node(parent_node, child_board, (spawn_move, (0, 0)), current_index, all_states, maxColor)
+                
+            child_nodes.append(child_node)
     
     # for each cell of current player of node, spread cell in all the possible directions
     possibleSpreads = getSpreadMoves(child_cells)
     for spread_move in possibleSpreads:
+        current_index += 1
         #print("spreadmove", spread_move)
         child_board = spread(spread_move[0], spread_move[1], parent_board)
-        child_node = create_node(parent_node, child_board, (spread_move[0], spread_move[1]), total_index, all_states, maxColor)
+        child_node = create_node(parent_node, child_board, (spread_move[0], spread_move[1]), current_index, all_states, maxColor)
         
         child_nodes.append(child_node)
-        total_index += 1
 
-    # spawn cell in all possible empty spaces IF board power is not 49
-    if getBoardPower(parent_board) < 49:
-        for spawn_move in getSpawnMoves(parent_board, parent_color):
-            child_board = spawn(spawn_move, parent_board)
-            #print("child_board", child_board)
-            child_node = create_node(parent_node, child_board, (spawn_move, (0, 0)), total_index, all_states, maxColor)
-                
-            child_nodes.append(child_node)
-            total_index += 1
+    # print(possibleSpreads)
         
     return child_nodes
 
-def create_node(parent_node, new_board, new_move, total_index, all_states, maxColor):
+def create_node(parent_node, new_board, new_move, current_index, all_states, maxColor):
     """Creates new "node" structure, given a new board"""
 
-    new_node = {"id": total_index + 1,
+    new_node = {"id": current_index,
                 "board": new_board,
                 "parent_id": parent_node["id"],
                 "score": None,
                 "depth": parent_node["depth"] + 1,
                 "most_recent_move": new_move,
-                "children": None,
                 "type": None,
-                "color": None
+                "color": getOppositeColor(parent_node["color"])
     }
 
     if parent_node["type"] == MAX:
@@ -139,9 +156,7 @@ def create_node(parent_node, new_board, new_move, total_index, all_states, maxCo
     else:
         new_node["type"] = MAX
 
-    new_node["color"] = getOppositeColor(parent_node["color"])
-
-    new_node["score"] = getCellRatio(new_board, maxColor)
+    new_node["score"] = getCellRatio(new_board, maxColor) 
     propagateScore(new_node, all_states)
 
     return new_node

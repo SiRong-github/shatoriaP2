@@ -73,14 +73,14 @@ class GreedyAgent:
         global currTotalPower
         match action:
             case SpawnAction(cell):
-                print(f"Testing: {color} SPAWN at {cell}")
+                #print(f"Testing: {color} SPAWN at {cell}")
                 if color == self._color:
                     currTotalPower = updateBoardSpawn(tuple(cell), color, board, own, currTotalPower)
                 else:
                     currTotalPower = updateBoardSpawn(tuple(cell), color, board, opponent, currTotalPower)
                 pass
             case SpreadAction(cell, direction):
-                print(f"Testing: {color} SPREAD from {cell}, {direction}")
+                #print(f"Testing: {color} SPREAD from {cell}, {direction}")
                 if color == self._color:
                     currTotalPower = updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board, own, opponent, currTotalPower)
                 else:
