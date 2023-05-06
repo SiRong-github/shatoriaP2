@@ -17,11 +17,8 @@ def getCountConqueredIfSpread(board, x, y, direction, color):
     # Check if can empower own and/or conquer opponent
     for i in range(1, k+1):
         newCell = check_bounds(addTuples(cell, multiplyPower(direction, i)))
-        if newCell in board.keys():
-            if board[newCell][0] != color:
-                countConquered += 1
-            else: 
-                countConquered += 0.5
+        if newCell in board.keys() and board[newCell][0] != color:
+            countConquered += 1
     return countConquered
 
 def getBestGreedySpreadMove(board, own, color):

@@ -1,50 +1,55 @@
+from referee.game import PlayerColor
+
 MIN_COORDINATE = 0
 MAX_COORDINATE = 6
 
+def spread(cell, direction, board):
+    """Spreads a cell in desired direction. Returns resulting board"""
 
-def spread(r, q, dr, dq, board, actions_list):
-    """Spreads a red cell (r, q) to the direction (dr, dq). Updates board and list of actions accordingly."""
+    copied_board = board.copy()
 
-    parent_cell = (r, q)
+    cell_rq = cell[0]
+    cell_color = cell[1][0]
+    
+    curr_power = get_power(cell_rq, copied_board)
 
-    if not valid_spread(parent_cell, board):
-        return False
+    # Spreads cells across board in `direction` according to `cell`'s power
+    spread_cell = (cell_rq[0] + direction[0], cell_rq[1] + direction[1])
 
-    curr_power = get_power((r, q), board)
-
-    spread_cell = (r + dr, q + dq)
     while (curr_power != 0):
-        print(spread_cell)
         spread_cell = check_bounds(spread_cell)
-        print(spread_cell)
 
-        if (spread_cell not in board):
-            board[spread_cell] = ("r", 1)
+        # spread to an empty space
+        if (spread_cell not in copied_board):
+            copied_board[spread_cell] = (cell_color, 1)
 
+        # delete destination cell from board if its power is above 6
+        elif (get_power(spread_cell, copied_board) + 1 > MAX_COORDINATE):
+            del copied_board[spread_cell]
+
+        # add to power of existing cell and infect it to red
         else:
-            board[spread_cell] = ("r", get_power(spread_cell, board) + 1)
-
-        actions_list.append(spread_cell + (dr, dq))
+            copied_board[spread_cell] = (cell_color, get_power(spread_cell, copied_board) + 1)
 
         curr_power -= 1
-        spread_cell = (spread_cell[0] + dr, spread_cell[1] + dq)
+        # next cell to plant on board
+        spread_cell = (spread_cell[0] + direction[0], spread_cell[1] + direction[1])
 
-    print(actions_list)
+    # remove parent cell from board
+    del copied_board[(cell_rq[0], cell_rq[1])]
 
-    # Empty parent cell
-    del board[(r, q)]
+    return copied_board
 
-    return
+def spawn(cell, board):
+    """Spawns a cell in desired location. Returns resulting board"""
 
+    copied_board = board.copy()
+    copied_board[cell[0]] = (cell[1][0], cell[1][1])
 
-def valid_spread(cell, board):
-    """Return true if it's possible to spread cell (r, q), and false otherwise."""
-
-    return ((cell in board) or (get_color(cell, board) == "r"))
-
+    return copied_board
 
 def check_bounds(cell):
-    """If coordinates of a new cell is beyond the bounds of the board when spreading, adjust so that ___. """
+    """If coordinates of a new cell is beyond the bounds of the board when spreading, adjust so that it teleports to the correct location on the board."""
 
     if (cell[0] < MIN_COORDINATE):
         cell = (cell[0] % (MAX_COORDINATE+1), cell[1])
@@ -58,12 +63,18 @@ def check_bounds(cell):
 
     return cell
 
-
-def get_color(cell, board):
+def get_color(cell_rq, board):
     """Returns color of cell (r, q) in board."""
 
-    return board[cell][0]
+    return board[cell_rq][0]
 
+def get_red_blue_cells(board):
+    """Return list of red and blue cells on board (including their power and color) as a dictionary"""
+    # print("board", board)
+    reds = {key: board[key] for key in board.keys() if board[key][0] == PlayerColor.RED}
+    blues = {key: board[key] for key in board.keys() if board[key][0] == PlayerColor.BLUE}
+    
+    return reds, blues
 
 def get_power(cell, board):
     """Returns power of cell (r, q) in board."""
