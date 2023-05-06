@@ -50,7 +50,7 @@ class GreedyAgent:
                     return SpawnAction(HexPos(5, 1)) #easiest to visualise
         else:
             # Spread if can conquer tokens
-            possibleMoves = getBestGreedySpreadMove(board, own)
+            possibleMoves = getBestGreedySpreadMove(board, own, self._color)
             best = possibleMoves.pop(0)
 
             # Spawn if not best move and currTotalPower not at limit
