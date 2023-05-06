@@ -12,7 +12,7 @@ from .miniMaxTreeHelpers import *
 
 import logging
 
-logging.basicConfig(level=logging.DEBUG, filename="logfile.txt", filemode="a+",
+logging.basicConfig(level=logging.INFO, filename="logfile.txt", filemode="a+",
     format="%(asctime)-15s %(levelname)-8s %(message)s")
 
 # This is the entry point for your game playing agent. Currently the agent

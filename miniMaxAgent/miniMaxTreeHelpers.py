@@ -67,7 +67,7 @@ def miniMaxTree(board, color: PlayerColor):
     # Return move in level 1 of the tree with MAXIMUM value
     depth1Nodes = {key: value for key, value in all_states.items() if value["depth"] == 1}
     # print(depth1Nodes)
-    #logging.debug(depth1Nodes)
+    logging.info(depth1Nodes)
 
     maxID = 2
     maxScore = (0, 0)
@@ -114,7 +114,7 @@ def generate_children(parent_node, current_index, all_states, maxColor):
             child_nodes.append(child_node)
     
     # for each cell of current player of node, spread cell in all the possible directions
-    possibleSpreads = getSpreadMoves(child_cells)
+    possibleSpreads = getSpreadMoves(child_cells, parent_board)
     for spread_move in possibleSpreads:
         current_index += 1
         #print("spreadmove", spread_move)

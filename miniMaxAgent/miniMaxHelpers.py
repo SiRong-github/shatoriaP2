@@ -83,7 +83,7 @@ def getCountConqueredIfSpread(board, x, y, direction):
             countConquered += 1
     return countConquered
 
-def getSpreadMoves(own):
+def getSpreadMoves(own, board):
     """Return all possible spread moves on board."""
 
     possibleMoves = []
@@ -94,7 +94,14 @@ def getSpreadMoves(own):
         y = cell[1]
 
         for dir in HexDir:
-            possibleMoves.append(((cell, own[cell]), directionTupleConverter(dir)))
+            tupleDir = directionTupleConverter(dir)
+
+             # Don't bother trying if cell has power 1 and will take over nothing
+            if get_power(cell, board) == 1 and getCountConqueredIfSpread(board, x, y, tupleDir) == 0:
+                continue
+            
+            else:
+                possibleMoves.append(((cell, own[cell]), tupleDir))
 
     return possibleMoves
 
