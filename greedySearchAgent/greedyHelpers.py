@@ -6,7 +6,7 @@ from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
 from helperFunctions.boardHelpers import *
 
-def getCountConqueredIfSpread(board, x, y, direction):
+def getCountConqueredIfSpread(board, x, y, direction, color):
     """
     Check if valid spread move
     """
@@ -17,11 +17,11 @@ def getCountConqueredIfSpread(board, x, y, direction):
     # Check if can empower own and/or conquer opponent
     for i in range(1, k+1):
         newCell = check_bounds(addTuples(cell, multiplyPower(direction, i)))
-        if newCell in board.keys():
+        if newCell in board.keys() and board[newCell][0] != color:
             countConquered += 1
     return countConquered
 
-def getBestGreedySpreadMove(board, own):
+def getBestGreedySpreadMove(board, own, color):
 
     possibleMoves = []
 
@@ -30,7 +30,7 @@ def getBestGreedySpreadMove(board, own):
         x = cell[0]
         y = cell[1]
         for dir in HexDir:
-            possibleMoves.append((getCountConqueredIfSpread(board, x, y, directionTupleConverter(dir)), cell, dir))
+            possibleMoves.append((getCountConqueredIfSpread(board, x, y, directionTupleConverter(dir), color), cell, dir))
 
     # Sort highest to lowest
     possibleMoves.sort(key=lambda x: x[0], reverse=True)

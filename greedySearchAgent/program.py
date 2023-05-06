@@ -50,7 +50,7 @@ class GreedyAgent:
                     return SpawnAction(HexPos(5, 1)) #easiest to visualise
         else:
             # Spread if can conquer tokens
-            possibleMoves = getBestGreedySpreadMove(board, own)
+            possibleMoves = getBestGreedySpreadMove(board, own, self._color)
             best = possibleMoves.pop(0)
 
             # Spawn if not best move and currTotalPower not at limit
@@ -73,14 +73,14 @@ class GreedyAgent:
         global currTotalPower
         match action:
             case SpawnAction(cell):
-                #print(f"Testing: {color} SPAWN at {cell}")
+                print(f"Testing: {color} SPAWN at {cell}")
                 if color == self._color:
                     currTotalPower = updateBoardSpawn(tuple(cell), color, board, own, currTotalPower)
                 else:
                     currTotalPower = updateBoardSpawn(tuple(cell), color, board, opponent, currTotalPower)
                 pass
             case SpreadAction(cell, direction):
-                #print(f"Testing: {color} SPREAD from {cell}, {direction}")
+                print(f"Testing: {color} SPREAD from {cell}, {direction}")
                 if color == self._color:
                     currTotalPower = updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board, own, opponent, currTotalPower)
                 else:
@@ -88,7 +88,7 @@ class GreedyAgent:
                 pass
 
 # Testing
-# agent first: python3 -m referee agent greedySearchAgent:GreedyAgent
-# GreedyAgent first: python3 -m referee greedySearchAgent:GreedyAgent agent
+# agent first: python3 -m referee -t 180 agent greedySearchAgent:GreedyAgent
+# GreedyAgent first: python3 -m referee -t 180 greedySearchAgent:GreedyAgent agent
 # Help
 # python3 -m referee -h
