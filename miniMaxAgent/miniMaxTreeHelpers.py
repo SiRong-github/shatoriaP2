@@ -50,7 +50,7 @@ def miniMaxTree(board, color: PlayerColor):
     # alpha beta pruning (later) - focus on expanding board states which can take over a lot of cells
 
     current_index = 1
-    while (time.time() - startTime) < 0.5:
+    while (time.time() - startTime) < 1:
         child_nodes = generate_children(current_node, current_index, all_states, maxColor)
         
         for child_node in child_nodes:
@@ -83,6 +83,7 @@ def miniMaxTree(board, color: PlayerColor):
     cell = move[0][0]
 
     bestMove = (cell, move[1])
+    logging.warning(all_states[maxID]["score"])
     
     #print("BESTMOVE", bestMove)
 
