@@ -26,7 +26,7 @@ own = dict() # (x, y) : power
 opponent = dict()
 currTotalPower = 0
 
-class MiniMaxBFSAgent:
+class UnprunedMiniMaxAgent:
     def __init__(self, color: PlayerColor, **referee: dict):
         """
         Initialise the agent.
@@ -92,8 +92,8 @@ class MiniMaxBFSAgent:
 
 # Testing
 
-# python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxBFSAgent:MiniMaxBFSAgent
-# python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent greedySearchAgent:GreedyAgent
+# python -m referee -t 180 unprunedMiniMaxBFS:UnprunedMiniMaxAgent miniMaxBFSAgent:MiniMaxBFSAgent
+# python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent unprunedMiniMaxBFS:UnprunedMiniMaxAgent
 # python -m referee -t 180 greedySearchAgent:GreedyAgent miniMaxBFSAgent:MiniMaxBFSAgent 
 
 # Help
