@@ -1,4 +1,4 @@
-from queue import PriorityQueue
+from queue import Queue
 from helperFunctions.action_helpers import *
 from .miniMaxConstants import *
 from .miniMaxHelpers import *
@@ -32,7 +32,7 @@ def miniMaxTree(board, color: PlayerColor):
     all_states = dict()
 
     # To store nodes to be expanded, in ascending order of f(n)
-    pq = PriorityQueue()
+    q = Queue()
 
     # Initialize root node
     root_node = initMiniMaxTree(board, color)
@@ -42,9 +42,8 @@ def miniMaxTree(board, color: PlayerColor):
 
     # Negative because we want to expand nodes with highest scores first, since we are playing as MAX
 
-    # TODO: Make priority queue tiebreaker with
-    pq.put((root_node["score"], root_node["id"]))
-    current_node = all_states[pq.get()[1]]
+    q.put(root_node)
+    current_node = all_states[q.get()["id"]]
 
     # Continue generating children until goal time is reached
     # alpha beta pruning (later) - focus on expanding board states which can take over a lot of cells
@@ -56,13 +55,14 @@ def miniMaxTree(board, color: PlayerColor):
         for child_node in child_nodes:
             all_states[child_node["id"]] = child_node
             #print("child score", child_node["score"])
-            pq.put((-child_node["score"][0], -child_node["score"][1], child_node["id"]))
+            q.put(child_node)
         
         # print(color, [node["score"] for node in child_nodes])
 
-        current_node = all_states[pq.get()[2]]
+        current_node = all_states[q.get()["id"]]
+        curr_id = current_node["id"]
         current_index += len(child_nodes)
-        #logging.debug(current_node)
+        logging.error(f"{curr_id}")
 
     # Return move in level 1 of the tree with MAXIMUM value
     depth1Nodes = {key: value for key, value in all_states.items() if value["depth"] == 1}

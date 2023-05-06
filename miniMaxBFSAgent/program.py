@@ -12,7 +12,7 @@ from .miniMaxTreeHelpers import *
 
 import logging
 
-logging.basicConfig(level=logging.WARNING, filename="logfile.txt", filemode="a+",
+logging.basicConfig(level=logging.ERROR, filename="logfile.txt", filemode="a+",
     format="%(asctime)-15s %(levelname)-8s %(message)s")
 
 # This is the entry point for your game playing agent. Currently the agent
@@ -96,7 +96,7 @@ class MiniMaxBFSAgent:
 #agent first: python -m referee -t 0.2 miniMaxAgent:MiniMaxAgent miniMaxAgent:MiniMaxAgent
 # miniMax first: python -m referee miniMaxAgent:MiniMaxAgent greedySearchAgent:GreedyAgent
 
-# python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxBFSAgent:miniMaxBFSAgent
+# python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxBFSAgent:MiniMaxBFSAgent
 
 # python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent greedySearchAgent:GreedyAgent
 # python -m referee -t 180 greedySearchAgent:GreedyAgent miniMaxBFSAgent:MiniMaxBFSAgent 
