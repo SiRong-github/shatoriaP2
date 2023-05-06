@@ -19,7 +19,7 @@ def  initMiniMaxTree(board, color: PlayerColor):
                 "color": color
     }
 
-    root_node["score"] = 0
+    root_node["score"] = (0, 0)
 
     return root_node
 
@@ -41,6 +41,8 @@ def miniMaxTree(board, color: PlayerColor):
     # print("MaxColor", maxColor)
 
     # Negative because we want to expand nodes with highest scores first, since we are playing as MAX
+
+    # TODO: Make priority queue tiebreaker with
     pq.put((root_node["score"], root_node["id"]))
     current_node = all_states[pq.get()[1]]
 
@@ -54,12 +56,13 @@ def miniMaxTree(board, color: PlayerColor):
         for child_node in child_nodes:
             all_states[child_node["id"]] = child_node
             #print("child score", child_node["score"])
-            pq.put((-child_node["score"], child_node["id"]))
+            pq.put((-child_node["score"][0], -child_node["score"][1], child_node["id"]))
         
         # print(color, [node["score"] for node in child_nodes])
 
-        current_node = all_states[pq.get()[1]]
+        current_node = all_states[pq.get()[2]]
         current_index += len(child_nodes)
+        #logging.debug(current_node)
 
     # Return move in level 1 of the tree with MAXIMUM value
     depth1Nodes = {key: value for key, value in all_states.items() if value["depth"] == 1}
@@ -67,25 +70,11 @@ def miniMaxTree(board, color: PlayerColor):
     #logging.debug(depth1Nodes)
 
     maxID = 2
-    maxScore = 0
+    maxScore = (0, 0)
     for id, node in depth1Nodes.items():
         if node["score"] > maxScore:
-            #print("id", id)
-            logging.debug(f"Changed max node")
             maxID = id
             maxScore = node["score"]
-
-        # tiebreaker - if ratio is the same, pick the node with higher total power
-        elif node["score"] == maxScore:
-            currBoard = node["board"]
-            maxBoard = all_states[maxID]["board"]
-            logging.debug(f"{getTotalPower(currBoard, color)}, {getTotalPower(maxBoard, color)}")
-
-            if (getTotalPower(node["board"], color) > getTotalPower(all_states[maxID]["board"], color)):
-                maxID = id
-                maxScore = node["score"]
-                print("YES IT HAPPENED")
-
     
     #print(maxID)
     move = all_states[maxID]["most_recent_move"]
@@ -156,7 +145,7 @@ def create_node(parent_node, new_board, new_move, current_index, all_states, max
     else:
         new_node["type"] = MAX
 
-    new_node["score"] = getCellRatio(new_board, maxColor) 
+    new_node["score"] = (getCellRatio(new_board, maxColor), getTotalPower(new_board, maxColor))
     propagateScore(new_node, all_states)
 
     return new_node
@@ -166,19 +155,29 @@ def propagateScore(node, all_states):
 
     current_node = node
 
+    logging.debug(f"current node:{current_node}")
     while (current_node["parent_id"] != None):
+        cur = all_states[node["parent_id"]]
+        logging.debug(f"PARENT: {cur}")
         if (current_node["type"] == MAX and current_node["score"] < all_states[node["parent_id"]]["score"]):
             # Parent MINI would want to pick lower scored move
             all_states[node["parent_id"]]["score"] = current_node["score"]
+            logging.debug("PARENT MINI UPDATED")
+            cur = all_states[node["parent_id"]]
+            logging.debug(f"After change: {cur}")
 
         elif (current_node["type"] == MINI and current_node["score"] > all_states[node["parent_id"]]["score"]):
             # Parent MAX would want to pick higher scored move
             all_states[node["parent_id"]]["score"] = current_node["score"]
+            logging.debug("PARENT MAX UPDATED")
+            cur = all_states[node["parent_id"]]
+            logging.debug(f"After change: {cur}")
 
         # no changes made
         else:
+            logging.debug("no more change")
             break
-
+        
         current_node = all_states[node["parent_id"]]
     
     return

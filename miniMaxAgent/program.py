@@ -2,7 +2,7 @@
 # Project Part B: Game Playing Agent
 
 from referee.game import \
-    PlayerColor, Action, SpawnAction, SpreadAction, HexPos, HexDir
+    PlayerColor, Action, SpawnAction, SpreadAction, HexPos
 
 from helperFunctions.action_helpers import *
 from helperFunctions.boardHelpers import *
@@ -99,5 +99,9 @@ class MiniMaxAgent:
 # python -m referee -t 180 miniMaxAgent:MiniMaxAgent miniMaxAgent:MiniMaxAgent
 # python -m referee -t 180 miniMaxAgent:MiniMaxAgent greedySearchAgent:GreedyAgent
 # python -m referee -t 180 greedySearchAgent:GreedyAgent miniMaxAgent:MiniMaxAgent 
+
+# python -m referee -t 180 agent miniMaxAgent:MiniMaxAgent 
+# python -m referee -t 180 miniMaxAgent:MiniMaxAgent agent
 # Help
 # python3 -m referee -h
+
