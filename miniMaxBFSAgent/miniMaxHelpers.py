@@ -5,6 +5,7 @@ from helperFunctions.action_helpers import *
 from helperFunctions.tupleOperators import *
 from helperFunctions.utils import *
 from helperFunctions.boardHelpers import *
+import logging
 
 def getBoardPower(board):
     totalPower = 0
@@ -34,7 +35,7 @@ def getCellRatio(board, maxColor: PlayerColor):
     match maxColor:
         case PlayerColor.RED:
             if (blues_total == 0):
-                #print("1")
+                logging.error("49d")
                 return 49
             else:
                 #print("2")
@@ -43,6 +44,7 @@ def getCellRatio(board, maxColor: PlayerColor):
         case PlayerColor.BLUE:
             if (reds_total == 0):
                 #print("3")
+                logging.error("49d")
                 return 49
             else:
                 #print("4")

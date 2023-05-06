@@ -54,14 +54,19 @@ def miniMaxTree(board, color: PlayerColor):
         
         for child_node in child_nodes:
             all_states[child_node["id"]] = child_node
-            #print("child score", child_node["score"])
-            q.put(child_node)
+            
+            # no need to expand nodes with a score of 0 or 49
+            if (current_node["score"] != 49 and current_node["score"] != 0):
+                q.put(child_node)
+            else:
+                logging.error("SKIPPED")
         
         # print(color, [node["score"] for node in child_nodes])
 
         current_node = all_states[q.get()["id"]]
         curr_id = current_node["id"]
         current_index += len(child_nodes)
+
         logging.error(f"{curr_id}")
 
     # Return move in level 1 of the tree with MAXIMUM value
