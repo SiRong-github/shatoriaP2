@@ -99,8 +99,10 @@ def generate_children(parent_node, current_index, all_states, maxColor):
     # get 
     if parent_color == PlayerColor.RED:
         child_cells = reds
+        opponent_cells = blues
     else:
         child_cells = blues
+        opponent_cells = reds
 
     child_nodes = list()
 

@@ -118,21 +118,22 @@ def getSpawnMoves(board, color):
     
     return doableMoves
 
-def getDefensiveSpawnMoves(board, opponent):
+def getDefensiveSpawnMoves(board, opponent, color):
     """Return spawn moves which aren't in `opponent` range. Possible way of alpha beta pruning!"""
 
-    impossibleMoves = []
+    impossibleMoves = set()
     doableMoves = []
 
     # Search for cells in range of opponent
     for opponentToken in opponent.keys():
-        impossibleMoves.append(getOpponentRange(board, opponentToken))
+        impossibleMoves.update(getOpponentRange(board, opponentToken))
+    #print(impossibleMoves)
 
     # Get spawn moves which are not in opponent range
     for i in range(0, 7):
         for j in range(0, 7):
-            if (i, j) not in impossibleMoves:
-                doableMoves.append((i, j))
+            if (i, j) not in impossibleMoves and (i, j) not in board:
+                doableMoves.append(((i, j),(color, 1)))
     
     return doableMoves
 
