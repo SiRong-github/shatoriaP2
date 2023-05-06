@@ -93,8 +93,9 @@ class MiniMaxAgent:
 # Testing
 # agent first: python -m referee -t 30 greedySearchAgent:GreedyAgent miniMaxAgent:MiniMaxAgent
 
-#agent first: python -m referee -t 0.2 miniMaxAgent:MiniMaxAgent miniMaxAgent:MiniMaxAgent
+# agent first: python -m referee -t 0.2 miniMaxAgent:MiniMaxAgent miniMaxAgent:MiniMaxAgent
 # miniMax first: python3 -m referee miniMaxAgent:MiniMaxAgent greedySearchAgent:GreedyAgent
+# greedy first: python3 -m referee greedySearchAgent:GreedyAgent miniMaxAgent:MiniMaxAgent
 
 # python3 -m referee -t 180 miniMaxAgent:MiniMaxAgent miniMaxAgent:MiniMaxAgent
 # python3 -m referee -t 180 miniMaxAgent:MiniMaxAgent greedySearchAgent:GreedyAgent

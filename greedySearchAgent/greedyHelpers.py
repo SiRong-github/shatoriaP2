@@ -17,25 +17,35 @@ def getCountConqueredIfSpread(board, x, y, direction, color):
     # Check if can empower own and/or conquer opponent
     for i in range(1, k+1):
         newCell = check_bounds(addTuples(cell, multiplyPower(direction, i)))
-        if newCell in board.keys() and board[newCell][0] != color:
-            countConquered += 1
+        if newCell in board.keys(): 
+            if board[newCell][0] != color:
+                countConquered += 1
+            else:
+                countConquered += 0.01
+
     return countConquered
 
 def getBestGreedySpreadMove(board, own, color):
 
     possibleMoves = []
+    otherPossibleMoves = []
 
     # Search for possible spread moves
     for cell in own.keys():
         x = cell[0]
         y = cell[1]
         for dir in HexDir:
-            possibleMoves.append((getCountConqueredIfSpread(board, x, y, directionTupleConverter(dir), color), cell, dir))
+            numConquered = getCountConqueredIfSpread(board, x, y, directionTupleConverter(dir), color)
+            if (type(numConquered) == int and numConquered != 0):
+                possibleMoves.append((numConquered, cell, dir))
+            else:
+                otherPossibleMoves.append((numConquered, cell, dir))
 
     # Sort highest to lowest
     possibleMoves.sort(key=lambda x: x[0], reverse=True)
+    otherPossibleMoves.sort(key=lambda x: x[0], reverse=True)
 
-    return possibleMoves
+    return possibleMoves, otherPossibleMoves
     
 def getBestGreedySpawnMove(board, own, opponent):
 
