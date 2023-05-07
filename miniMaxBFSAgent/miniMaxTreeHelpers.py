@@ -164,8 +164,6 @@ def create_node(parent_node, new_board, new_move, current_index, all_states, max
     else:
         new_node["type"] = MAX
 
-    new_node["score"] = (getCellRatio(new_board, maxColor), getTotalPower(new_board, maxColor))
-
     return new_node
 
 def propagateScore(node, all_states):
