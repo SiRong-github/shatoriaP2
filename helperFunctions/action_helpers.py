@@ -3,6 +3,10 @@ from referee.game import PlayerColor
 MIN_COORDINATE = 0
 MAX_COORDINATE = 6
 
+def is_goal_board_in_general(board):
+    reds, blues = get_red_blue_cells(board)
+    return len(reds) == 0 or len(blues) == 0
+
 def spread(cell, direction, board):
     """Spreads a cell in desired direction. Returns resulting board"""
 
