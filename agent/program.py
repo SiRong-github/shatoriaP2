@@ -4,10 +4,10 @@
 from referee.game import \
     PlayerColor, Action, SpawnAction, SpreadAction, HexPos, HexDir
 
-from .helperFunctions.action_helpers import *
-from .helperFunctions.boardHelpers import *
-from .helperFunctions.tupleOperators import *
-from .helperFunctions.utils import *
+from .action_helpers import *
+from .boardHelpers import *
+from .tupleOperators import *
+from .utils import *
 from .greedyHelpers import *
 
 # This is the entry point for your game playing agent. Currently the agent
