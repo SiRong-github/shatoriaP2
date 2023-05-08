@@ -18,7 +18,7 @@ def heuristic(board, maxColor: PlayerColor):
 def generate_board_child(parent_board, maxColor: PlayerColor):
     """Generate most optimal successor of relaxed game's `parent_board`'s state. Returns child board configuration."""
 
-    reds, blues = get_red_blue_cells(parent_board)
+    reds, blues = get_red_blue_cells_list(parent_board)
 
     match maxColor:
         case PlayerColor.RED:
@@ -37,8 +37,8 @@ def generate_board_child(parent_board, maxColor: PlayerColor):
     sorted_mins = sorted(min_cells, key=lambda cell: cell[1][1], reverse=True)
     
     sixes_idx = 0
-    for blue_cell in sorted_mins:
-        if get_power(blue_cell[0], parent_board) != MAX_COORDINATE:
+    for min_cell in sorted_mins:
+        if get_power(min_cell[0], parent_board) != MAX_COORDINATE:
             break
         sixes_idx += 1
 
@@ -49,13 +49,13 @@ def generate_board_child(parent_board, maxColor: PlayerColor):
 
     # avoid trying to infect more than existing number of blue cells (power of red cell > num of blue cells left)
     power = get_power(to_spread[0], parent_board)
-    if (power) > len(blues):
-        power = len(blues)
+    if (power) > len(min_cells):
+        power = len(min_cells)
 
-    # blue cells to spread to (can only spread to 'power' number of blue cells)
+    # min cells to spread to (can only spread to 'power' number of blue cells)
     spread_targets = list()
-    for blue_cell in sorted_mins:
-        spread_targets.append(blue_cell[0])
+    for min_cell in sorted_mins:
+        spread_targets.append(min_cell[0])
         power -= 1
 
         if power == 0:

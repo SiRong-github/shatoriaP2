@@ -69,11 +69,19 @@ def get_color(cell_rq, board):
     return board[cell_rq][0]
 
 def get_red_blue_cells(board):
-    """Return list of red and blue cells on board (including their power and color) as a dictionary"""
+    """Return dicts of red and blue cells on board (including their power and color) as a dictionary"""
     # print("board", board)
     reds = {key: board[key] for key in board.keys() if board[key][0] == PlayerColor.RED}
     blues = {key: board[key] for key in board.keys() if board[key][0] == PlayerColor.BLUE}
     
+    return reds, blues
+
+def get_red_blue_cells_list(board):
+    """Return lists of red and blue cells on board (including their power and color) as a dictionary"""
+
+    reds = [(key, board[key]) for key in board.keys() if board[key][0] == PlayerColor.RED]
+    blues = [(key, board[key]) for key in board.keys() if board[key][0] == PlayerColor.BLUE]
+
     return reds, blues
 
 def get_power(cell, board):
