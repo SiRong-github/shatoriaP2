@@ -101,7 +101,7 @@ class MiniMaxBFSAgent:
 # python3 -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxBFSAgent:MiniMaxBFSAgent
 
 # python3 -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent greedySearchAgent:GreedyAgent
-# python3 -m referee -t 180 greedySearchAgent:GreedyAgent miniMaxBFSAgent:MiniMaxBFSAgent
+# python3 -m referee -t 180 agent miniMaxBFSAgent:MiniMaxBFSAgent
 # python3 -m referee -t 180 greedySearchAgent:GreedyAgent miniMaxBFSAgent:MiniMaxBFSAgent 
 
 # python -m referee -t 180 agent miniMaxBFSAgent:MiniMaxAgent 
