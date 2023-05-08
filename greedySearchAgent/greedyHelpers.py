@@ -1,10 +1,10 @@
 # Helper functions
 
 from referee.game import HexDir
-from helperFunctions.action_helpers import *
-from helperFunctions.tupleOperators import *
-from helperFunctions.utils import *
-from helperFunctions.boardHelpers import *
+from .action_helpers import *
+from .tupleOperators import *
+from .utils import *
+from .boardHelpers import *
 
 def getCountConqueredIfSpread(board, x, y, direction, color):
     """
