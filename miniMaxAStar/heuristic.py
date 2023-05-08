@@ -7,13 +7,17 @@ def heuristic(board, maxColor: PlayerColor):
 
     curr_board = board.copy()
 
+    if (generate_board_child(curr_board, maxColor) == False):
+        return -1000
+
     # Play relaxed infexion with optimal moves until goal is reached.
     num_moves = 0
-    while not is_goal_board(curr_board):
+    while not is_goal_board(curr_board, maxColor):
         curr_board = generate_board_child(curr_board, maxColor)
         num_moves += 1
     
-    return num_moves
+    # negative because we want max to pick smallest moves, and min to pick largest moves
+    return -num_moves
 
 def generate_board_child(parent_board, maxColor: PlayerColor):
     """Generate most optimal successor of relaxed game's `parent_board`'s state. Returns child board configuration."""
@@ -31,31 +35,36 @@ def generate_board_child(parent_board, maxColor: PlayerColor):
 
     # always spread max cells with highest power
     sorted_maxes = sorted(max_cells, key=lambda cell: cell[1][1])
+
+    if len(sorted_maxes) == 0:
+        return False
+    
     to_spread = sorted_maxes[0]
 
-    # always infect min cells with highest powers first (other than 6, since spreading to a power of 6 cell will just remove it) since they'll result in high-power red cells, so we can get to shortest possible moves faster
+    # always infect min cells with highest powers first (other than 6, since spreading to a power of 6 cell will just remove both) since they'll result in high-power red cells, so we can get to shortest possible moves faster
     sorted_mins = sorted(min_cells, key=lambda cell: cell[1][1], reverse=True)
     
+    # reorder so that sixes are at the backmost and fives are at the frontmost per normal
     sixes_idx = 0
     for min_cell in sorted_mins:
         if get_power(min_cell[0], parent_board) != MAX_COORDINATE:
             break
         sixes_idx += 1
-
     if sixes_idx != 0:
         power_sixes = sorted_mins[:sixes_idx]
         del sorted_mins[:sixes_idx]
         sorted_mins = sorted_mins + power_sixes
 
-    # avoid trying to infect more than existing number of blue cells (power of red cell > num of blue cells left)
-    power = get_power(to_spread[0], parent_board)
+    # avoid trying to infect more than existing number of blue cells (power of red cell > num of blue cells left). + 1 to account for spawn
+    power = get_power(to_spread[0], parent_board) + 1
     if (power) > len(min_cells):
         power = len(min_cells)
 
     # min cells to spread to (can only spread to 'power' number of blue cells)
     spread_targets = list()
+
     for min_cell in sorted_mins:
-        spread_targets.append(min_cell[0])
+        spread_targets.append(min_cell[0]) # append with cell 
         power -= 1
 
         if power == 0:

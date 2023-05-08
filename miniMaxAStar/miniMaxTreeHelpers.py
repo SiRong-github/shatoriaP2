@@ -3,6 +3,7 @@ from helperFunctions.action_helpers import *
 from .miniMaxConstants import *
 from .miniMaxHelpers import *
 from referee.game import PlayerColor
+from .heuristic import *
 import time
 import logging
 
@@ -20,7 +21,7 @@ def  initMiniMaxTree(board, color: PlayerColor):
                 "color": color
     }
 
-    root_node["score"] = (0, 0)
+    root_node["score"] = heuristic(root_node["board"], color)
 
     return root_node
 
@@ -48,7 +49,7 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
 
     # Continue generating children until goal time is reached
     # alpha beta pruning (later) - focus on expanding board states which can take over a lot of cells
-
+    
     current_index = 1
     logging.critical(f"Time left: {(time_remaining/turns_left)*(1/3)}")
     while (time.time() - startTime) < (time_remaining/(2 * turns_left)):
@@ -57,12 +58,12 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
         
         for child_node in child_nodes:
             all_states[child_node["id"]] = child_node
-            
-            # no need to expand nodes with a score of 0 or 49
-            if (current_node["score"] != 49 and current_node["score"] != 0):
-                q.put(child_node)
-            else:
-                logging.error("SKIPPED")
+
+            # don't expand nodes which have already reached a game-end state
+            if is_goal_board_in_general(child_node["board"]):
+                continue
+
+            q.put(child_node)
         
         # print(color, [node["score"] for node in child_nodes])
 
@@ -71,7 +72,7 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
         current_index += len(child_nodes)
 
         logging.error(f"{curr_id}")
-
+    
     # propagate scores up nodes
     testTime = time.time()
     for node in all_states.values():
@@ -85,7 +86,7 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
     logging.info(depth1Nodes)
 
     maxID = 2
-    maxScore = (0, 0)
+    maxScore = -1000 # cellratio, totalpower
     for id, node in depth1Nodes.items():
         if node["score"] > maxScore:
             maxID = id
@@ -163,6 +164,8 @@ def create_node(parent_node, new_board, new_move, current_index, all_states, max
         new_node["type"] = MINI
     else:
         new_node["type"] = MAX
+    
+    new_node["score"] = heuristic(new_node["board"], maxColor)
 
     return new_node
 
