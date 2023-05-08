@@ -20,7 +20,7 @@ def  initMiniMaxTree(board, color: PlayerColor):
                 "color": color
     }
 
-    root_node["score"] = (0, 0)
+    root_node["score"] = (-1, -1)
 
     return root_node
 
@@ -42,6 +42,8 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
     # print("MaxColor", maxColor)
 
     # Negative because we want to expand nodes with highest scores first, since we are playing as MAX
+    
+    #TODO: COMPARE CALCULATION SCORE EVERYTIME + PRUNING NODES VS CALCULATING CHILD NODES AT THE END ONLY WITHOUT PRUNING NODES
 
     q.put(root_node)
     current_node = all_states[q.get()["id"]]
@@ -58,8 +60,8 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
         for child_node in child_nodes:
             all_states[child_node["id"]] = child_node
             
-            # no need to expand nodes with a score of 0 or 49
-            if (current_node["score"] != 49 and current_node["score"] != 0):
+            # no need to expand nodes with a cell ratio of 0 or 49
+            if (current_node["score"][0] != 49 and current_node["score"][0] != 0):
                 q.put(child_node)
             else:
                 logging.error("SKIPPED")
@@ -85,7 +87,7 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
     logging.info(depth1Nodes)
 
     maxID = 2
-    maxScore = (0, 0)
+    maxScore = (0, 0) # cellratio, totalpower
     for id, node in depth1Nodes.items():
         if node["score"] > maxScore:
             maxID = id
@@ -163,8 +165,8 @@ def create_node(parent_node, new_board, new_move, current_index, all_states, max
         new_node["type"] = MINI
     else:
         new_node["type"] = MAX
-
-    new_node["score"] = (getCellRatio(new_board, maxColor), getTotalPower(new_board, maxColor))
+    
+    new_node["score"] = (getCellRatio(new_node["board"], maxColor), getTotalPower(new_node["board"], maxColor))
 
     return new_node
 
