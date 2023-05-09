@@ -62,16 +62,12 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
             # no need to expand nodes with a cell ratio of 0 or 49
             if (current_node["score"][0] != 49 and current_node["score"][0] != 0):
                 q.put(child_node)
-            else:
-                logging.error("SKIPPED")
         
         # print(color, [node["score"] for node in child_nodes])
 
         current_node = all_states[q.get()["id"]]
         curr_id = current_node["id"]
         current_index += len(child_nodes)
-
-        logging.error(f"{curr_id}")
 
     # propagate scores up nodes
     testTime = time.time()
@@ -81,7 +77,6 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
 
     # Return move in level 1 of the tree with MAXIMUM value
     depth1Nodes = {key: value for key, value in all_states.items() if value["depth"] == 1}
-    #logging.critical(all_states[list(all_states.keys())[-1]]["id"])
 
     maxID = 2
     maxScore = (0, 0) # cellratio, totalpower
@@ -97,7 +92,6 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
     cell = move[0][0]
 
     bestMove = (cell, move[1])
-    logging.warning(all_states[maxID]["score"])
     
     #print("BESTMOVE", bestMove)
 
@@ -172,27 +166,20 @@ def propagateScore(node, all_states):
 
     current_node = node
 
-    logging.debug(f"current node:{current_node}")
     while (current_node["parent_id"] != None):
         cur = all_states[node["parent_id"]]
-        logging.debug(f"PARENT: {cur}")
         if (current_node["type"] == MAX and current_node["score"] < all_states[node["parent_id"]]["score"]):
             # Parent MINI would want to pick lower scored move
             all_states[node["parent_id"]]["score"] = current_node["score"]
-            logging.debug("PARENT MINI UPDATED")
             cur = all_states[node["parent_id"]]
-            logging.debug(f"After change: {cur}")
 
         elif (current_node["type"] == MINI and current_node["score"] > all_states[node["parent_id"]]["score"]):
             # Parent MAX would want to pick higher scored move
             all_states[node["parent_id"]]["score"] = current_node["score"]
-            logging.debug("PARENT MAX UPDATED")
             cur = all_states[node["parent_id"]]
-            logging.debug(f"After change: {cur}")
 
         # no changes made
         else:
-            logging.debug("no more change")
             break
         
         current_node = all_states[node["parent_id"]]

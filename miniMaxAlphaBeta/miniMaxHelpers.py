@@ -64,6 +64,15 @@ def getTotalPower(board, maxColor: PlayerColor):
         
     return sum
 
+def eval(board, maxColor: PlayerColor):
+    """Return eval score of a board"""
+
+    return (getCellRatio(board, maxColor), getTotalPower(board, maxColor))
+
+def negEval(board, maxColor: PlayerColor):
+    """Return negative eval score of a board for priority queue"""
+
+    return (-getCellRatio(board, maxColor), -getTotalPower(board, maxColor))
 
 def getCountConqueredIfSpread(board, x, y, direction):
     """
