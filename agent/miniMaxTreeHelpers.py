@@ -143,7 +143,7 @@ def generate_children(parent_node, current_index, all_states, maxColor):
         
     return child_nodes
 
-def create_node(parent_node, new_board, new_move, current_index, all_states, maxColor):
+def create_node(parent_node, new_board, new_move, current_index, maxColor):
     """Creates new "node" structure, given a new board"""
 
     new_node = {"id": current_index,
@@ -200,7 +200,9 @@ def propagateScore(node, all_states):
     return
 
 def alpha_beta_propagation(all_states, node, alpha, beta):
+
     if not node["has_children"]: # return node score if node has no children
+       all_states[node["id"]]["score"] = node["score"]
        return node["score"]
     
     if node["type"] == MAX:
@@ -212,7 +214,7 @@ def alpha_beta_propagation(all_states, node, alpha, beta):
             
             if alpha >= beta:
                 break
-        
+        all_states[node["id"]]["score"] = score
         return score
     
     else:
@@ -224,4 +226,5 @@ def alpha_beta_propagation(all_states, node, alpha, beta):
             if beta <= alpha:
                 break
         
+        all_states[node["id"]]["score"] = score
         return score

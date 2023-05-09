@@ -4,15 +4,15 @@
 from referee.game import \
     PlayerColor, Action, SpawnAction, SpreadAction, HexPos
 
-from ..agent.action_helpers import *
-from ..agent.boardHelpers import *
-from ..agent.tupleOperators import *
-from ..agent.utils import *
-from ..agent.miniMaxTreeHelpers import *
+from .helperFunctions.action_helpers import *
+from .helperFunctions.boardHelpers import *
+from .helperFunctions.tupleOperators import *
+from .helperFunctions.utils import *
+from .miniMaxTreeHelpers import *
 
 import logging
 
-logging.basicConfig(level=logging.ERROR, filename="logfile.txt", filemode="a+",
+logging.basicConfig(level=logging.CRITICAL, filename="logfile.txt", filemode="a+",
     format="%(asctime)-15s %(levelname)-8s %(message)s")
 
 # This is the entry point for your game playing agent. Currently the agent
@@ -26,7 +26,7 @@ own = dict() # (x, y) : power
 opponent = dict()
 currTotalPower = 0
 
-class Agent:
+class MiniMaxBFSAgent:
     def __init__(self, color: PlayerColor, **referee: dict):
         """
         Initialise the agent.
@@ -45,11 +45,14 @@ class Agent:
         """
         global currTotalPower
         global turn
+        global turns_left
 
         if (len(board) == 0):
             turn = 1
+            turns_left = 171
         elif (len(board) == 1):
             turn = 0
+            turns_left = 171
 
         # Determine if opening move
         if (len(board) < 2) and self._color == PlayerColor.RED:
@@ -59,8 +62,9 @@ class Agent:
         else:
             turn += 2
             logging.debug(f"{self._color}, TURN: {turn}")
-            move = miniMaxTree(board, self._color)
+            move = miniMaxTree(board, self._color, turns_left, referee["time_remaining"])
             cell = HexPos(move[0][0], move[0][1])
+            turns_left -= 1
 
             if move[1] == (0, 0):
                 return SpawnAction(cell)
@@ -91,21 +95,11 @@ class Agent:
                 pass
 
 # Testing
-# agent first: python -m referee -t 30 greedySearchAgent:GreedyAgent miniMaxAgent:MiniMaxAgent
-# greedy first: python3 -m referee greedySearchAgent:GreedyAgent miniMaxAgent:MiniMaxAgent
-# mini first: python3 -m referee miniMaxAgent:MiniMaxAgent greedySearchAgent:GreedyAgent
 
-#agent first: python -m referee -t 0.2 miniMaxAgent:MiniMaxAgent miniMaxAgent:MiniMaxAgent
-# miniMax first: python -m referee miniMaxAgent:MiniMaxAgent greedySearchAgent:GreedyAgent
+# python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxBFSAgent:MiniMaxBFSAgent
+# python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent greedySearchAgent:GreedyAgent
+# python -m referee -t 180 greedySearchAgent:GreedyAgent miniMaxBFSAgent:MiniMaxBFSAgent 
 
-# python3 -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxBFSAgent:MiniMaxBFSAgent
-
-# python3 -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent greedySearchAgent:GreedyAgent
-# python3 -m referee -t 180 agent miniMaxBFSAgent:MiniMaxBFSAgent
-# python3 -m referee -t 180 agent greedySearchAgent:GreedyAgent
-
-# python -m referee -t 180 agent miniMaxBFSAgent:MiniMaxAgent 
-# python -m referee -t 180 miniMaxAgent:MiniMaxAgent agent
 # Help
 # python3 -m referee -h
 

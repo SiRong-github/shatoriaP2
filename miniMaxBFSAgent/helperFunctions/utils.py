@@ -1,0 +1,4 @@
+# Constants
+MAX_MOVE = 343
+MAX_TOTAL_POWER = 48
+MAX_POWER = 6

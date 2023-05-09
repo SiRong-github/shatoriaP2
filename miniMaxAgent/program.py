@@ -4,10 +4,10 @@
 from referee.game import \
     PlayerColor, Action, SpawnAction, SpreadAction, HexPos, HexDir
 
-from helperFunctions.action_helpers import *
-from helperFunctions.boardHelpers import *
-from helperFunctions.tupleOperators import *
-from helperFunctions.utils import *
+from .helperFunctions.action_helpers import *
+from .helperFunctions.boardHelpers import *
+from .helperFunctions.tupleOperators import *
+from .helperFunctions.utils import *
 from .miniMaxTreeHelpers import *
 
 import logging

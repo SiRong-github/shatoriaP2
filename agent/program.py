@@ -96,9 +96,9 @@ class Agent:
 
 # Testing
 
-# python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxBFSAgent:MiniMaxBFSAgent
-# python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent greedySearchAgent:GreedyAgent
-# python3 -m referee -t 180 agent greedySearchAgent:GreedyAgent
+# python3 -m referee -t 30 miniMaxBFSAgent:MiniMaxBFSAgent agent
+# python3 -m referee -t 180 -s 250 greedySearchAgent:GreedyAgent agent 
+# python3 -m referee -t 180 greedySearchAgent:GreedyAgent randomAgent
 
 # Help
 # python3 -m referee -h
