@@ -1,5 +1,5 @@
 from queue import Queue
-from helperFunctions.action_helpers import *
+from .action_helpers import *
 from .miniMaxConstants import *
 from .miniMaxHelpers import *
 from referee.game import PlayerColor
