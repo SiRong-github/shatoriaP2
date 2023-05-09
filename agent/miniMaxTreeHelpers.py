@@ -56,7 +56,7 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
     logging.critical(f"Time left: {(time_remaining/turns_left)}")
     while (time.time() - startTime) < (time_remaining/(2 * turns_left)):
         all_states[current_node["id"]]["has_children"] = True
-        child_nodes = generate_children(current_node, current_index, all_states, maxColor)
+        child_nodes = generate_children(current_node, current_index, maxColor)
         
         for child_node in child_nodes:
             all_states[child_node["id"]] = child_node
@@ -104,7 +104,7 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
 
     return bestMove
 
-def generate_children(parent_node, current_index, all_states, maxColor):
+def generate_children(parent_node, current_index, maxColor):
     """Generate all possible children of a parent node. Returns child nodes"""
 
     parent_board = parent_node["board"]
@@ -125,7 +125,7 @@ def generate_children(parent_node, current_index, all_states, maxColor):
             current_index += 1
             child_board = spawn(spawn_move, parent_board)
             #print("child_board", child_board)
-            child_node = create_node(parent_node, child_board, (spawn_move, (0, 0)), current_index, all_states, maxColor)
+            child_node = create_node(parent_node, child_board, (spawn_move, (0, 0)), current_index, maxColor)
                 
             child_nodes.append(child_node)
     
@@ -135,7 +135,7 @@ def generate_children(parent_node, current_index, all_states, maxColor):
         current_index += 1
         #print("spreadmove", spread_move)
         child_board = spread(spread_move[0], spread_move[1], parent_board)
-        child_node = create_node(parent_node, child_board, (spread_move[0], spread_move[1]), current_index, all_states, maxColor)
+        child_node = create_node(parent_node, child_board, (spread_move[0], spread_move[1]), current_index, maxColor)
         
         child_nodes.append(child_node)
 
