@@ -6,7 +6,7 @@ from referee.game import PlayerColor
 import time
 import logging
 
-def  initMiniMaxTree(board, color: PlayerColor):
+def initMiniMaxTree(board, color: PlayerColor):
     """Initializes miniMaxTree based on board state. Returns root node."""
     
     root_node = {"id": 1,
@@ -14,16 +14,18 @@ def  initMiniMaxTree(board, color: PlayerColor):
                 "parent_id": None,
                 "score": None,
                 "depth": 0,
+                "has_children": True,
+                "children": list(),
                 "most_recent_move": None,
                 "type": MAX,
                 "color": color
     }
 
-    root_node["score"] = (0, 0)
+    root_node["score"] = (-1, -1)
 
     return root_node
 
-def miniMaxTree(board, color: PlayerColor):
+def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
     """Constructs miniMaxTree to find best possible move, given amount of time left. Throughout the game, the opponent will be MAX and the player will be MIN. Aim to minimize "score". Returns best node from depth '1'."""
 
     startTime = time.time()
@@ -41,6 +43,8 @@ def miniMaxTree(board, color: PlayerColor):
     # print("MaxColor", maxColor)
 
     # Negative because we want to expand nodes with highest scores first, since we are playing as MAX
+    
+    #TODO: COMPARE CALCULATION SCORE EVERYTIME + PRUNING NODES VS CALCULATING CHILD NODES AT THE END ONLY WITHOUT PRUNING NODES
 
     q.put(root_node)
     current_node = all_states[q.get()["id"]]
@@ -49,17 +53,18 @@ def miniMaxTree(board, color: PlayerColor):
     # alpha beta pruning (later) - focus on expanding board states which can take over a lot of cells
 
     current_index = 1
-    while (time.time() - startTime) < 1:
+    logging.critical(f"Time left: {(time_remaining/turns_left)}")
+    while (time.time() - startTime) < (time_remaining/(2 * turns_left)):
+        all_states[current_node["id"]]["has_children"] = True
         child_nodes = generate_children(current_node, current_index, all_states, maxColor)
         
         for child_node in child_nodes:
             all_states[child_node["id"]] = child_node
+            all_states[current_node["id"]]["children"].append(child_node["id"])
             
-            # no need to expand nodes with a score of 0 or 49
-            if (current_node["score"] != 49 and current_node["score"] != 0):
+            # no need to expand nodes with a cell ratio of 0 or 49
+            if (current_node["score"][0] != 49 and current_node["score"][0] != 0):
                 q.put(child_node)
-            else:
-                logging.error("SKIPPED")
         
         # print(color, [node["score"] for node in child_nodes])
 
@@ -69,13 +74,18 @@ def miniMaxTree(board, color: PlayerColor):
 
         logging.error(f"{curr_id}")
 
+    # propagate scores up nodes
+    testTime = time.time()
+    alpha_beta_propagation(all_states, root_node, (float('-inf'), float('-inf')), (float('inf'), float('inf')))
+    logging.critical(time.time() - testTime)
+
     # Return move in level 1 of the tree with MAXIMUM value
     depth1Nodes = {key: value for key, value in all_states.items() if value["depth"] == 1}
     # print(depth1Nodes)
     logging.info(depth1Nodes)
 
     maxID = 2
-    maxScore = (0, 0)
+    maxScore = (0, 0) # cellratio, totalpower
     for id, node in depth1Nodes.items():
         if node["score"] > maxScore:
             maxID = id
@@ -104,10 +114,8 @@ def generate_children(parent_node, current_index, all_states, maxColor):
     # get 
     if parent_color == PlayerColor.RED:
         child_cells = reds
-        opponent_cells = blues
     else:
         child_cells = blues
-        opponent_cells = reds
 
     child_nodes = list()
 
@@ -143,6 +151,8 @@ def create_node(parent_node, new_board, new_move, current_index, all_states, max
                 "parent_id": parent_node["id"],
                 "score": None,
                 "depth": parent_node["depth"] + 1,
+                "has_children": False,
+                "children": list(),
                 "most_recent_move": new_move,
                 "type": None,
                 "color": getOppositeColor(parent_node["color"])
@@ -152,9 +162,8 @@ def create_node(parent_node, new_board, new_move, current_index, all_states, max
         new_node["type"] = MINI
     else:
         new_node["type"] = MAX
-
-    new_node["score"] = (getCellRatio(new_board, maxColor), getTotalPower(new_board, maxColor))
-    propagateScore(new_node, all_states)
+    
+    new_node["score"] = (getCellRatio(new_node["board"], maxColor), getTotalPower(new_node["board"], maxColor))
 
     return new_node
 
@@ -189,3 +198,30 @@ def propagateScore(node, all_states):
         current_node = all_states[node["parent_id"]]
     
     return
+
+def alpha_beta_propagation(all_states, node, alpha, beta):
+    if not node["has_children"]: # return node score if node has no children
+       return node["score"]
+    
+    if node["type"] == MAX:
+        score = (float('-inf'), float('-inf'))
+        for child_id in node["children"]:
+            child = all_states[child_id]
+            score = max(score, alpha_beta_propagation(all_states, child, alpha, beta))
+            alpha = max(alpha, score)
+            
+            if alpha >= beta:
+                break
+        
+        return score
+    
+    else:
+        score = (float('inf'), float('inf'))
+        for child_id in node["children"]:
+            child = all_states[child_id]
+            score = min(score, alpha_beta_propagation(all_states, child, alpha, beta))
+            beta = min(beta, score)
+            if beta <= alpha:
+                break
+        
+        return score

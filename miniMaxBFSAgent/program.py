@@ -4,11 +4,11 @@
 from referee.game import \
     PlayerColor, Action, SpawnAction, SpreadAction, HexPos
 
-from helperFunctions.action_helpers import *
-from helperFunctions.boardHelpers import *
-from helperFunctions.tupleOperators import *
-from helperFunctions.utils import *
-from .miniMaxTreeHelpers import *
+from ..agent.action_helpers import *
+from ..agent.boardHelpers import *
+from ..agent.tupleOperators import *
+from ..agent.utils import *
+from ..agent.miniMaxTreeHelpers import *
 
 import logging
 
@@ -26,7 +26,7 @@ own = dict() # (x, y) : power
 opponent = dict()
 currTotalPower = 0
 
-class MiniMaxBFSAgent:
+class Agent:
     def __init__(self, color: PlayerColor, **referee: dict):
         """
         Initialise the agent.
@@ -102,7 +102,7 @@ class MiniMaxBFSAgent:
 
 # python3 -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent greedySearchAgent:GreedyAgent
 # python3 -m referee -t 180 agent miniMaxBFSAgent:MiniMaxBFSAgent
-# python3 -m referee -t 180 greedySearchAgent:GreedyAgent miniMaxBFSAgent:MiniMaxBFSAgent 
+# python3 -m referee -t 180 agent greedySearchAgent:GreedyAgent
 
 # python -m referee -t 180 agent miniMaxBFSAgent:MiniMaxAgent 
 # python -m referee -t 180 miniMaxAgent:MiniMaxAgent agent
