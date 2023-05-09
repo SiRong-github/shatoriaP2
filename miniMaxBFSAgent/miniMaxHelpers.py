@@ -35,14 +35,19 @@ def getCellRatio(board, maxColor: PlayerColor):
     match maxColor:
         case PlayerColor.RED:
             if (blues_total == 0):
+                logging.error("49d")
                 return 49
             else:
+                #print("2")
                 return reds_total/blues_total
             
         case PlayerColor.BLUE:
             if (reds_total == 0):
+                #print("3")
+                logging.error("49d")
                 return 49
             else:
+                #print("4")
                 return blues_total/reds_total
             
 def getTotalPower(board, maxColor: PlayerColor):
@@ -115,6 +120,26 @@ def getSpawnMoves(board, color):
     
     return doableMoves
 
+def getDefensiveSpawnMoves(board, opponent, color):
+    """Return spawn moves which aren't in `opponent` range. Possible way of pruning nodes!"""
+
+    baitMoves = set()
+    doableMoves = []
+
+    # Search for possible 'bait' moves in range of opponent
+    for opponentToken in opponent.keys():
+        baitMoves.update(getOpponentRange(board, opponentToken))
+    
+    # Out of those bait moves, check which ones are counterattackable
+
+    # Get spawn moves which are not in opponent range
+    for i in range(0, 7):
+        for j in range(0, 7):
+            if (i, j) not in baitMoves and (i, j) not in board:
+                doableMoves.append(((i, j),(color, 1)))
+    
+    return doableMoves
+
 def getOpponentRange(board, opponentToken):
     """Returns cells which an opponent cell `opponentToken` can reach"""
      
@@ -130,3 +155,10 @@ def getOpponentRange(board, opponentToken):
             opponentRange.append(newCell)
 
     return opponentRange
+
+def isBesideOpponent(ownToken, opponentToken):
+
+    for dir in HexDir:
+        if addTuples(opponentToken, directionTupleConverter(dir)) == ownToken:
+            return True
+    return False

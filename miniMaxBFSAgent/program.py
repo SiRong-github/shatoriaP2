@@ -26,7 +26,7 @@ own = dict() # (x, y) : power
 opponent = dict()
 currTotalPower = 0
 
-class MiniMaxAlphaBeta:
+class MiniMaxBFSAgent:
     def __init__(self, color: PlayerColor, **referee: dict):
         """
         Initialise the agent.
@@ -56,12 +56,12 @@ class MiniMaxAlphaBeta:
 
         # Determine if opening move
         if (len(board) < 2) and self._color == PlayerColor.RED:
-            logging.critical(f"{self._color}, TURN: {turn}")
+            logging.debug(f"{self._color}, TURN: {turn}")
             return SpawnAction(HexPos(3, 3)) # easiest to visualise
         
         else:
             turn += 2
-            logging.critical(f"{self._color}, TURN: {turn}")
+            logging.debug(f"{self._color}, TURN: {turn}")
             move = miniMaxTree(board, self._color, turns_left, referee["time_remaining"])
             cell = HexPos(move[0][0], move[0][1])
             turns_left -= 1
@@ -96,14 +96,8 @@ class MiniMaxAlphaBeta:
 
 # Testing
 
-# python -m referee -t 130 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxAlphaBeta:MiniMaxAlphaBeta
-# python -m referee -t 180 miniMaxAlphaBeta:MiniMaxAlphaBeta miniMaxBFSAgent:MiniMaxBFSAgent
-# python -m referee -t 180 miniMaxAlphaBeta:MiniMaxAlphaBeta agent:Agent
-# python -m referee -t 180 miniMaxAlphaBeta:MiniMaxAlphaBeta greedySearchAgent:GreedyAgent
-
+# python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxBFSAgent:MiniMaxBFSAgent
 # python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent greedySearchAgent:GreedyAgent
-# python -m referee -t 180 miniMaxAlphaBeta:MiniMaxAlphaBeta greedySearchAgent:GreedyAgent
-# python -m referee -t 180 greedySearchAgent:GreedyAgent miniMaxAlphaBeta:MiniMaxAlphaBeta 
 # python -m referee -t 180 greedySearchAgent:GreedyAgent miniMaxBFSAgent:MiniMaxBFSAgent 
 
 # Help
