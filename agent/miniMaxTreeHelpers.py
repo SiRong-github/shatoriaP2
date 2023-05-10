@@ -68,7 +68,7 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
         
         curr_pq = next_pq
     
-    # Empty the priority queues
+    # Empty the priority
     while not curr_pq.empty():
         curr_pq.get()
     while not next_pq.empty():

@@ -3,7 +3,6 @@
 from referee.game import HexDir, PlayerColor
 from .action_helpers import *
 from .tupleOperators import *
-from .utils import *
 from .boardHelpers import *
 
 def getBoardPower(board):

@@ -1,6 +1,6 @@
 from .action_helpers import *
 from .tupleOperators import *
-from .utils import *
+from .miniMaxConstants import *
 from referee.game import HexDir
 
 # Helper for updating board state 

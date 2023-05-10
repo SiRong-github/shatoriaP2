@@ -50,12 +50,10 @@ class Agent:
 
         # Determine if opening move
         if (len(board) < 2) and self._color == PlayerColor.RED:
-            #logging.critical(f"{self._color}, TURN: {turn}")
             return SpawnAction(HexPos(3, 3)) # easiest to visualise
         
         else:
             turn += 2
-            #logging.critical(f"{self._color}, TURN: {turn}")
             move = miniMaxTree(board, self._color, turns_left, referee["time_remaining"])
             cell = HexPos(move[0][0], move[0][1])
             turns_left -= 1
