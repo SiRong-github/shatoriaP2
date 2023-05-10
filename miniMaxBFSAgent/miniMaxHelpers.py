@@ -35,7 +35,6 @@ def getCellRatio(board, maxColor: PlayerColor):
     match maxColor:
         case PlayerColor.RED:
             if (blues_total == 0):
-                logging.error("49d")
                 return 49
             else:
                 #print("2")
@@ -43,8 +42,6 @@ def getCellRatio(board, maxColor: PlayerColor):
             
         case PlayerColor.BLUE:
             if (reds_total == 0):
-                #print("3")
-                logging.error("49d")
                 return 49
             else:
                 #print("4")
@@ -121,20 +118,21 @@ def getSpawnMoves(board, color):
     return doableMoves
 
 def getDefensiveSpawnMoves(board, opponent, color):
-    """Return spawn moves which aren't in `opponent` range. Possible way of alpha beta pruning!"""
+    """Return spawn moves which aren't in `opponent` range. Possible way of pruning nodes!"""
 
-    impossibleMoves = set()
+    baitMoves = set()
     doableMoves = []
 
-    # Search for cells in range of opponent
+    # Search for possible 'bait' moves in range of opponent
     for opponentToken in opponent.keys():
-        impossibleMoves.update(getOpponentRange(board, opponentToken))
-    #print(impossibleMoves)
+        baitMoves.update(getOpponentRange(board, opponentToken))
+    
+    # Out of those bait moves, check which ones are counterattackable
 
     # Get spawn moves which are not in opponent range
     for i in range(0, 7):
         for j in range(0, 7):
-            if (i, j) not in impossibleMoves and (i, j) not in board:
+            if (i, j) not in baitMoves and (i, j) not in board:
                 doableMoves.append(((i, j),(color, 1)))
     
     return doableMoves
