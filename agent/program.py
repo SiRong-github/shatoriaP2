@@ -3,7 +3,7 @@
 
 from referee.game import \
     PlayerColor, Action, SpawnAction, SpreadAction, HexPos
-
+from queue import PriorityQueue
 from .helperFunctions.action_helpers import *
 from .helperFunctions.boardHelpers import *
 from .helperFunctions.tupleOperators import *
@@ -52,7 +52,6 @@ class Agent:
         
         else:
             #RUN MINIMAX TREE OVER HERE
-
             startTime = time()
 
             # Store all nodes that have been explored
@@ -80,7 +79,6 @@ class Agent:
                     current_node = all_states[curr_pq.get()[1]]
                     all_states[current_node["id"]]["has_children"] = True
                     child_nodes = generate_children(current_node, current_index, all_states, maxColor)
-                    # need to do a curr depth thingy
 
                     for child_node in child_nodes:
                         all_states[child_node["id"]] = child_node

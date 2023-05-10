@@ -1,4 +1,3 @@
-from queue import PriorityQueue
 from .helperFunctions.action_helpers import *
 from .miniMaxConstants import *
 from .miniMaxHelpers import *
@@ -22,7 +21,7 @@ def initMiniMaxTree(board, color: PlayerColor):
 
     return root_node
 
-def generate_children(parent_node, current_index, all_states, maxColor):
+def generate_children(parent_node, current_index):
     """Generate all possible children of a parent node. Returns child nodes"""
 
     parent_board = parent_node["board"]
