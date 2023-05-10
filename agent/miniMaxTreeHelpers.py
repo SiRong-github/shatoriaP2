@@ -2,11 +2,8 @@ from queue import PriorityQueue
 from .helperFunctions.action_helpers import *
 from .miniMaxConstants import *
 from .miniMaxHelpers import *
-from referee.game import \
-    PlayerColor, Action, SpawnAction, SpreadAction, HexPos
-from time import time
+from referee.game import PlayerColor
 from math import inf
-import logging
 
 def initMiniMaxTree(board, color: PlayerColor):
     """Initializes miniMaxTree based on board state. Returns root node."""
@@ -24,82 +21,6 @@ def initMiniMaxTree(board, color: PlayerColor):
     }
 
     return root_node
-
-def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
-    """Constructs miniMaxTree to find best possible move, given amount of time left. Throughout the game, the opponent will be MAX and the player will be MIN. Aim to minimize "score". Returns best node from depth '1'."""
-
-    startTime = time()
-    #logging.critical(referee["space_remaining"])
-
-    # Store all nodes that have been explored
-    all_states = dict()
-
-    # To store nodes to be expanded in current depth
-    curr_pq = PriorityQueue()
-
-    # Initialize root node
-    root_node = initMiniMaxTree(board, color)
-    all_states[1] = root_node
-    maxColor = root_node["color"]
-    curr_pq.put(((-inf, -inf), root_node["id"]))
-
-    current_index = 1
-
-    # logging.critical(f"Time left: {(time_remaining/turns_left)}")
-    # order of expansion - put in PQ
-    
-    # Build minimax tree - build in time_remaining/turns_left seconds.
-    while (time() - startTime) < (time_remaining/turns_left):
-        # To store next nodes to be expanded in next depth
-        next_pq = PriorityQueue()
-        
-        while not curr_pq.empty():
-            current_node = all_states[curr_pq.get()[1]]
-            all_states[current_node["id"]]["has_children"] = True
-            child_nodes = generate_children(current_node, current_index, all_states, maxColor)
-            # need to do a curr depth thingy
-
-            for child_node in child_nodes:
-                all_states[child_node["id"]] = child_node
-                all_states[current_node["id"]]["children"].append(child_node["id"])
-                
-                # no need to expand nodes which are already a goal state
-                if not is_goal_board_in_general(child_node["board"]):
-                    next_pq.put((negEval(child_node["board"], maxColor), child_node["id"]))
-
-            current_index += len(child_nodes)
-        
-        curr_pq = next_pq
-
-    # clear old queues to save space
-    curr_pq = PriorityQueue()
-    next_pq = PriorityQueue()
-
-    # propagate scores up nodes
-    alpha_beta_propagation(all_states, 1, (-inf, -inf), (inf, inf), maxColor)
-    #logging.critical(time.time() - testTime)
-
-    # Return move in level 1 of the tree with MAXIMUM value
-    depth1Nodes = {key: value for key, value in all_states.items() if value["depth"] == 1}
-
-    maxID = 2
-    maxScore = (0, 0) # cellratio, totalpower
-    for id, node in depth1Nodes.items():
-        if node["score"] > maxScore:
-            maxID = id
-            maxScore = node["score"]
-    
-    #print(maxID)
-    move = all_states[maxID]["most_recent_move"]
-    #print("move", move)
-
-    cell = move[0][0]
-
-    bestMove = (cell, move[1])
-    
-    #print("BESTMOVE", bestMove)
-
-    return bestMove
 
 def generate_children(parent_node, current_index, all_states, maxColor):
     """Generate all possible children of a parent node. Returns child nodes"""
