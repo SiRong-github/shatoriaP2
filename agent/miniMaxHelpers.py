@@ -5,7 +5,6 @@ from .action_helpers import *
 from .tupleOperators import *
 from .utils import *
 from .boardHelpers import *
-import logging
 
 def getBoardPower(board):
     totalPower = 0

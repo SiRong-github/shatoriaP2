@@ -10,8 +10,6 @@ from .tupleOperators import *
 from .utils import *
 from .miniMaxTreeHelpers import *
 
-import logging
-
 #logging.basicConfig(level=logging.WARNING, filename="logfile.txt", filemode="a+",
     #format="%(asctime)-15s %(levelname)-8s %(message)s")
 
@@ -21,9 +19,7 @@ import logging
 # intended to serve as an example of how to use the referee API -- obviously
 # this is not a valid strategy for actually playing the game!
 
-board = dict() # (x, y) : (colour, power)
-own = dict() # (x, y) : power
-opponent = dict()
+board = dict() # (x, y) : (colour, power)Z
 currTotalPower = 0
 
 class Agent:
@@ -82,21 +78,21 @@ class Agent:
             case SpawnAction(cell):
                 #print(f"Testing: {color} SPAWN at {cell}")
                 if color == self._color:
-                    currTotalPower = updateBoardSpawn(tuple(cell), color, board, own, currTotalPower)
+                    currTotalPower = updateBoardSpawn(tuple(cell), color, board, currTotalPower)
                 else:
-                    currTotalPower = updateBoardSpawn(tuple(cell), color, board, opponent, currTotalPower)
+                    currTotalPower = updateBoardSpawn(tuple(cell), color, board, currTotalPower)
                 pass
             case SpreadAction(cell, direction):
                 #print(f"Testing: {color} SPREAD from {cell}, {direction}")
                 if color == self._color:
-                    currTotalPower = updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board, own, opponent, currTotalPower)
+                    currTotalPower = updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board, currTotalPower)
                 else:
-                    currTotalPower = updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board, opponent, own, currTotalPower)
+                    currTotalPower = updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board, currTotalPower)
                 pass
 
 # Testing
 
-# python3 -m referee -t 90 agent miniMaxBFSAgent:MiniMaxBFSAgent
+# python3 -m referee -l -t 180 agent miniMaxBFSAgent:MiniMaxBFSAgent
 
 # python -m referee -t 180 -s 250 miniMaxAlphaBeta:MiniMaxAlphaBeta miniMaxBFSAgent:MiniMaxBFSAgent
 # python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxAlphaBeta:MiniMaxAlphaBeta

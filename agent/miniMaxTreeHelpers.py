@@ -1,11 +1,10 @@
-from queue import Queue, PriorityQueue
+from queue import PriorityQueue
 from .action_helpers import *
 from .miniMaxConstants import *
 from .miniMaxHelpers import *
 from referee.game import PlayerColor
 import time
 from math import inf
-import logging
 
 def initMiniMaxTree(board, color: PlayerColor):
     """Initializes miniMaxTree based on board state. Returns root node."""

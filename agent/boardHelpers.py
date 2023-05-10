@@ -5,18 +5,17 @@ from referee.game import HexDir
 
 # Helper for updating board state 
 
-def updateBoardSpawn(cell, color, board, spawner, currTotalPower):
+def updateBoardSpawn(cell, color, board, currTotalPower):
     """
     Updates board state based on spawn
     """
     k = 1
     board[cell] = (color, k)
-    spawner[cell] = k
     currTotalPower += 1
 
     return currTotalPower
 
-def updateBoardSpread(cell, direction, color, board, attacker, victim, currTotalPower):
+def updateBoardSpread(cell, direction, color, board, currTotalPower):
     """
     Updates board state based on spread
     """
@@ -33,25 +32,15 @@ def updateBoardSpread(cell, direction, color, board, attacker, victim, currTotal
             prevK = board[newCell][1]
             # Check if power of token == 6
             if prevK == MAX_POWER:
-                # Check whose token
-                if prevColor == color:
-                    del attacker[newCell]
-                else:
-                    del victim[newCell]
                 del board[newCell]
                 currTotalPower -= 6
             else:
-                attacker[newCell] = prevK+1
                 board[newCell] = (color, prevK+1)
-                # Update opponent's tokens if conquered
-                if (prevColor != color):
-                    del victim[newCell]
                 currTotalPower += 1
         else:
-            currTotalPower = updateBoardSpawn(newCell, color, board, attacker, currTotalPower)
+            currTotalPower = updateBoardSpawn(newCell, color, board, currTotalPower)
 
     # Update
-    del attacker[cell]
     del board[cell]
     currTotalPower -= k
 
