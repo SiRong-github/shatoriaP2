@@ -2,8 +2,9 @@ from queue import PriorityQueue
 from .helperFunctions.action_helpers import *
 from .miniMaxConstants import *
 from .miniMaxHelpers import *
-from referee.game import PlayerColor
-import time
+from referee.game import \
+    PlayerColor, Action, SpawnAction, SpreadAction, HexPos
+from time import time
 from math import inf
 import logging
 
@@ -27,7 +28,8 @@ def initMiniMaxTree(board, color: PlayerColor):
 def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
     """Constructs miniMaxTree to find best possible move, given amount of time left. Throughout the game, the opponent will be MAX and the player will be MIN. Aim to minimize "score". Returns best node from depth '1'."""
 
-    startTime = time.time()
+    startTime = time()
+    #logging.critical(referee["space_remaining"])
 
     # Store all nodes that have been explored
     all_states = dict()
@@ -45,9 +47,9 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
 
     # logging.critical(f"Time left: {(time_remaining/turns_left)}")
     # order of expansion - put in PQ
-
+    
     # Build minimax tree - build in time_remaining/turns_left seconds.
-    while (time.time() - startTime) < (time_remaining/turns_left):
+    while (time() - startTime) < (time_remaining/turns_left):
         # To store next nodes to be expanded in next depth
         next_pq = PriorityQueue()
         
@@ -69,8 +71,11 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
         
         curr_pq = next_pq
 
+    # clear old queues to save space
+    curr_pq = PriorityQueue()
+    next_pq = PriorityQueue()
+
     # propagate scores up nodes
-    testTime = time.time()
     alpha_beta_propagation(all_states, 1, (-inf, -inf), (inf, inf), maxColor)
     #logging.critical(time.time() - testTime)
 

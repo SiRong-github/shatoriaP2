@@ -10,8 +10,8 @@ from .helperFunctions.tupleOperators import *
 from .helperFunctions.utils import *
 from .miniMaxTreeHelpers import *
 
-#logging.basicConfig(level=logging.WARNING, filename="logfile.txt", filemode="a+",
-    #format="%(asctime)-15s %(levelname)-8s %(message)s")
+logging.basicConfig(level=logging.CRITICAL, filename="logfile.txt", filemode="a+",
+    format="%(asctime)-15s %(levelname)-8s %(message)s")
 
 # This is the entry point for your game playing agent. Currently the agent
 # simply spawns a token at the centre of the board if playing as RED, and
@@ -51,7 +51,7 @@ class Agent:
         elif (len(board) == 1):
             turn = 0
             turns_left = 171
-
+        
         # Determine if opening move
         if (len(board) < 2) and self._color == PlayerColor.RED:
             #logging.critical(f"{self._color}, TURN: {turn}")
@@ -59,8 +59,9 @@ class Agent:
         
         else:
             turn += 2
-            #logging.critical(f"{self._color}, TURN: {turn}")
+            #RUN MINIMAX TREE OVER HERE
             move = miniMaxTree(board, self._color, turns_left, referee["time_remaining"])
+
             cell = HexPos(move[0][0], move[0][1])
             turns_left -= 1
 
@@ -97,6 +98,8 @@ class Agent:
 # python -m referee -t 90 miniMaxBFSAgent:MiniMaxBFSAgent agent:Agent
 
 # python -m referee -t 180 -s 250 miniMaxAlphaBeta:MiniMaxAlphaBeta miniMaxBFSAgent:MiniMaxBFSAgent
+# python -m referee -t 180 -s 250 agent:Agent agent:Agent
+
 # python -m referee -t 180 -s 250 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxAlphaBeta:MiniMaxAlphaBeta
 # python -m referee -t 180 -s 250 agent:Agent greedySearchAgent:GreedyAgent
 # python -m referee -t 180 miniMaxAlphaBeta:MiniMaxAlphaBeta miniMaxAlphaBeta:MiniMaxAlphaBeta
