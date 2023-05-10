@@ -1,6 +1,6 @@
 MINI = 0
 MAX = 1
-DEPTH_NODES_LIMIT = 10000 # limit of nodes per minimax tree depth
+DEPTH_NODES_LIMIT = 11000 # limit of nodes per minimax tree depth
 
 up = (1, -1)
 upLeft = (0, -1)
