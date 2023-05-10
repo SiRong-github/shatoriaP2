@@ -71,14 +71,14 @@ class Agent:
             
             # Build minimax tree - build in time_remaining/turns_left seconds.
             while (time() - startTime) < (referee["time_remaining"]/turns_left):
-                print(referee["space_remaining"])
+                
                 # To store next nodes to be expanded in next depth
                 next_pq = PriorityQueue()
                 
                 while not curr_pq.empty():
                     current_node = all_states[curr_pq.get()[1]]
                     all_states[current_node["id"]]["has_children"] = True
-                    child_nodes = generate_children(current_node, current_index, all_states, maxColor)
+                    child_nodes = generate_children(current_node, current_index)
 
                     for child_node in child_nodes:
                         all_states[child_node["id"]] = child_node
