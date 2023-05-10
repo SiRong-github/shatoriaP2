@@ -71,11 +71,11 @@ class Agent:
             
             # Build minimax tree - build in time_remaining/turns_left seconds.
             while (time() - startTime) < (referee["time_remaining"]/turns_left):
-                
+                curr_depth_nodes = 0
                 # To store next nodes to be expanded in next depth
                 next_pq = PriorityQueue()
                 
-                while not curr_pq.empty():
+                while not curr_pq.empty() and curr_depth_nodes < DEPTH_NODES_LIMIT:
                     current_node = all_states[curr_pq.get()[1]]
                     all_states[current_node["id"]]["has_children"] = True
                     child_nodes = generate_children(current_node, current_index)
@@ -89,6 +89,7 @@ class Agent:
                             next_pq.put((negEval(child_node["board"], maxColor), child_node["id"]))
 
                     current_index += len(child_nodes)
+                    curr_depth_nodes += len(child_nodes)
                 
                 curr_pq = next_pq
 
