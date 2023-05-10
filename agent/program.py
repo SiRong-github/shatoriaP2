@@ -20,7 +20,6 @@ from .miniMaxTreeHelpers import *
 # this is not a valid strategy for actually playing the game!
 
 board = dict() # (x, y) : (colour, power)Z
-currTotalPower = 0
 
 class Agent:
     def __init__(self, color: PlayerColor, **referee: dict):
@@ -39,7 +38,6 @@ class Agent:
         """
         Return the next action to take.
         """
-        global currTotalPower
         global turn
         global turns_left
 
@@ -72,27 +70,26 @@ class Agent:
         """
         Update the agent with the last player's action.
         """
-        global currTotalPower
 
         match action:
             case SpawnAction(cell):
                 #print(f"Testing: {color} SPAWN at {cell}")
                 if color == self._color:
-                    currTotalPower = updateBoardSpawn(tuple(cell), color, board, currTotalPower)
+                    updateBoardSpawn(tuple(cell), color, board)
                 else:
-                    currTotalPower = updateBoardSpawn(tuple(cell), color, board, currTotalPower)
+                    updateBoardSpawn(tuple(cell), color, board)
                 pass
             case SpreadAction(cell, direction):
                 #print(f"Testing: {color} SPREAD from {cell}, {direction}")
                 if color == self._color:
-                    currTotalPower = updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board, currTotalPower)
+                    updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board)
                 else:
-                    currTotalPower = updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board, currTotalPower)
+                    updateBoardSpread(tuple(cell), directionTupleConverter(direction), color, board)
                 pass
 
 # Testing
 
-# python3 -m referee -l -t 180 agent miniMaxBFSAgent:MiniMaxBFSAgent
+# python3 -m referee -l -t 180 miniMaxBFSAgent:MiniMaxBFSAgent agent
 
 # python -m referee -t 180 -s 250 miniMaxAlphaBeta:MiniMaxAlphaBeta miniMaxBFSAgent:MiniMaxBFSAgent
 # python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxAlphaBeta:MiniMaxAlphaBeta

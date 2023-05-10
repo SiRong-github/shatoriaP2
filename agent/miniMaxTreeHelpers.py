@@ -67,6 +67,12 @@ def miniMaxTree(board, color: PlayerColor, turns_left, time_remaining):
             current_index += len(child_nodes)
         
         curr_pq = next_pq
+    
+    # Empty the priority queues
+    while not curr_pq.empty():
+        curr_pq.get()
+    while not next_pq.empty():
+        next_pq.get()
 
     # propagate scores up nodes
     testTime = time.time()

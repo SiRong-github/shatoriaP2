@@ -5,17 +5,15 @@ from referee.game import HexDir
 
 # Helper for updating board state 
 
-def updateBoardSpawn(cell, color, board, currTotalPower):
+def updateBoardSpawn(cell, color, board):
     """
     Updates board state based on spawn
     """
     k = 1
     board[cell] = (color, k)
-    currTotalPower += 1
+    return
 
-    return currTotalPower
-
-def updateBoardSpread(cell, direction, color, board, currTotalPower):
+def updateBoardSpread(cell, direction, color, board):
     """
     Updates board state based on spread
     """
@@ -33,19 +31,15 @@ def updateBoardSpread(cell, direction, color, board, currTotalPower):
             # Check if power of token == 6
             if prevK == MAX_POWER:
                 del board[newCell]
-                currTotalPower -= 6
             else:
                 board[newCell] = (color, prevK+1)
-                currTotalPower += 1
         else:
-            currTotalPower = updateBoardSpawn(newCell, color, board, currTotalPower)
+            updateBoardSpawn(newCell, color, board)
 
     # Update
     del board[cell]
-    currTotalPower -= k
 
-    return currTotalPower
-
+    return
 
 def isValidSpawnMove(board, x, y):
     """
@@ -55,37 +49,6 @@ def isValidSpawnMove(board, x, y):
     if cell not in board:
         return True
     return False
-
-# def isValidSpreadMove(board, x, y, direction):
-#     """
-#     Check if valid spread move
-#     """
-#     cell = (x,y)
-#     k = board[cell][1]
-
-#     # Check if can empower own and/or conquer opponent
-#     for i in range(1, k+1):
-#         newCell = check_bounds(addTuples(cell, multiplyPower(direction, i)))
-#         if newCell in board.keys():
-#             return True
-#     return False
-
-def getRandoDir(randoDir):
-    """
-    Get direction based on random number
-    """
-    if randoDir == 0:
-        return (0, 1)
-    elif randoDir == 1:
-        return (-1, 1)
-    elif randoDir == 2:
-        return (-1, 0)
-    elif randoDir == 3:
-        return (0, -1)
-    elif randoDir == 4:
-        return (1, -1)
-    else:
-        return (1, 0)
     
 def directionTupleConverter(direction):
     """
