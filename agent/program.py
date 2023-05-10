@@ -4,10 +4,10 @@
 from referee.game import \
     PlayerColor, Action, SpawnAction, SpreadAction, HexPos
 
-from helperFunctions.action_helpers import *
-from helperFunctions.boardHelpers import *
-from helperFunctions.tupleOperators import *
-from helperFunctions.utils import *
+from .helperFunctions.action_helpers import *
+from .helperFunctions.boardHelpers import *
+from .helperFunctions.tupleOperators import *
+from .helperFunctions.utils import *
 from .miniMaxTreeHelpers import *
 
 #logging.basicConfig(level=logging.WARNING, filename="logfile.txt", filemode="a+",
@@ -94,11 +94,11 @@ class Agent:
 
 # Testing
 
-# python -m referee -t 90 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxAlphaBeta:MiniMaxAlphaBeta
+# python -m referee -t 90 miniMaxBFSAgent:MiniMaxBFSAgent agent:Agent
 
 # python -m referee -t 180 -s 250 miniMaxAlphaBeta:MiniMaxAlphaBeta miniMaxBFSAgent:MiniMaxBFSAgent
 # python -m referee -t 180 -s 250 miniMaxBFSAgent:MiniMaxBFSAgent miniMaxAlphaBeta:MiniMaxAlphaBeta
-# python -m referee -t 180 -s 250 miniMaxAlphaBeta:MiniMaxAlphaBeta greedySearchAgent:GreedyAgent
+# python -m referee -t 180 -s 250 agent:Agent greedySearchAgent:GreedyAgent
 # python -m referee -t 180 miniMaxAlphaBeta:MiniMaxAlphaBeta miniMaxAlphaBeta:MiniMaxAlphaBeta
 
 # python -m referee -t 180 miniMaxBFSAgent:MiniMaxBFSAgent greedySearchAgent:GreedyAgent

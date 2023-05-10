@@ -1,11 +1,10 @@
 # Helper functions
 
 from referee.game import HexDir, PlayerColor
-from helperFunctions.action_helpers import *
-from helperFunctions.tupleOperators import *
-from helperFunctions.utils import *
-from helperFunctions.boardHelpers import *
-import logging
+from .helperFunctions.action_helpers import *
+from .helperFunctions.tupleOperators import *
+from .helperFunctions.utils import *
+from .helperFunctions.boardHelpers import *
 
 def getBoardPower(board):
     totalPower = 0
