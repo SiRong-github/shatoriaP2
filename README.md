@@ -21,7 +21,7 @@ In a turn, a player may choose to either:
 
  In the case that a stack is incremented above POWER 6 (the maximum possible power), the stack is completely removed from the game, leaving the cell empty. This also consumes the SPREAD token that would have been placed on top.
 
-# Provided Code by the Subject
+# Provided Template and Driver Program by the Subject
     1. agent module (Template)
         a. __init__.py
             * This imports the Agent class in program.py.
