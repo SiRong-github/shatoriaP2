@@ -1,11 +1,10 @@
 # Helper functions
 
 from referee.game import HexDir, PlayerColor
-from helperFunctions.action_helpers import *
-from helperFunctions.tupleOperators import *
-from helperFunctions.utils import *
-from helperFunctions.boardHelpers import *
-import logging
+from .helperFunctions.action_helpers import *
+from .helperFunctions.tupleOperators import *
+from .helperFunctions.utils import *
+from .helperFunctions.boardHelpers import *
 
 def getBoardPower(board):
     totalPower = 0
@@ -123,19 +122,3 @@ def getSpawnMoves(board, color):
                 doableMoves.append(((i, j), (color, 1)))
     
     return doableMoves
-
-def getOpponentRange(board, opponentToken):
-    """Returns cells which an opponent cell `opponentToken` can reach"""
-     
-    opponentRange = []
-    k = board[opponentToken][1] # power of opponent cell
-
-    # Check if ownToken is in range of opponent spread
-    for dir in HexDir:
-        direction = directionTupleConverter(dir)
-
-        for i in range(1, k+1):
-            newCell = check_bounds(addTuples(opponentToken, multiplyPower(direction, i)))
-            opponentRange.append(newCell)
-
-    return opponentRange
