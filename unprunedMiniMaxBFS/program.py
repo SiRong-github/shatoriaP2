@@ -26,7 +26,7 @@ own = dict() # (x, y) : power
 opponent = dict()
 currTotalPower = 0
 
-class UnprunedMiniMaxAgent:
+class Agent:
     def __init__(self, color: PlayerColor, **referee: dict):
         """
         Initialise the agent.
