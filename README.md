@@ -2,7 +2,7 @@
 This is a COMP30024 Artificial Intelligence Project of the University of Melbourne created by a two-person team.
 
 # File Purpose
-The program implements one of the players in a strategic, perfect-information two-player game of contagion and domination called Infexion. This is the extended version of [shatoria](https://github.com/SiRong-github/shatoria).
+The program implements one of the players in a strategic, perfect-information two-player game of contagion and domination called Infexion. This is the extended version of [shatoria](https://github.com/SiRong-github/shatoria). You may play the game with a friend [here](https://comp30024.pages.gitlab.unimelb.edu.au/2023s1/infexion-playground/).
 
 # File-Level Documentation
 Infexion consists of a 7x7 hexagonally-tiled, infinitely repeating board, described by an axial coordinate system in the program. A valid coordinate is an integer pair (r,q), 0 ≤ r ≤ 6, 0 ≤ q ≤ 6. The objective of the players (named Red and Blue) are to conquer all the 'tokens' on the board.
